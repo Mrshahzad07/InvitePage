@@ -1,0 +1,227 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-emerald-deep: #06231A;
+    --color-emerald-primary: #0B3D2E;
+    --color-emerald-light: #134E3A;
+    --color-gold-antique: #C9A24B;
+    --color-gold-rich: #E5C365;
+    --color-gold-deep: #9A7728;
+    --color-champagne: #F3E6C4;
+    --color-ivory: #FBF6E9;
+    --color-silver: #B8BDC4;
+    --color-maroon: #7A1F2B;
+
+    --font-script: 'Great Vibes', cursive;
+    --font-cinzel: 'Cinzel', serif;
+    --font-cormorant: 'Cormorant Garamond', Georgia, serif;
+    --font-arabic: 'Amiri', serif;
+    --font-body: 'Poppins', system-ui, sans-serif;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background-color: var(--color-emerald-deep);
+    color: var(--color-ivory);
+    font-family: var(--font-body);
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    background: radial-gradient(circle at 50% 0%, #134E3A 0%, #0B3D2E 40%, #06231A 100%);
+    min-height: 100vh;
+  }
+
+  #root {
+    width: 100%;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+  }
+}
+
+/* Custom Typography & Utility Classes */
+.font-script {
+  font-family: var(--font-script);
+}
+
+.font-cinzel {
+  font-family: var(--font-cinzel);
+}
+
+.font-cormorant {
+  font-family: var(--font-cormorant);
+}
+
+.font-arabic {
+  font-family: var(--font-arabic);
+}
+
+.font-poppins {
+  font-family: var(--font-body);
+}
+
+/* Luxury Gold & Metallic Text Gradients */
+.text-gold-gradient {
+  background: linear-gradient(135deg, #FFFDF8 0%, #F5DEB3 20%, #C9A24B 50%, #9A7728 80%, #E5C365 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gold-bright {
+  background: linear-gradient(135deg, #FFFFFF 0%, #FBF6E9 25%, #E5C365 50%, #C9A24B 75%, #F3E6C4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-silver-gradient {
+  background: linear-gradient(135deg, #FFFFFF 0%, #E2E8F0 50%, #94A3B8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Glassmorphism tuned for Royal Emerald Theme */
+.glass-emerald {
+  background: rgba(11, 61, 46, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(201, 162, 75, 0.3);
+}
+
+.glass-emerald-card {
+  background: linear-gradient(135deg, rgba(19, 78, 58, 0.75) 0%, rgba(11, 61, 46, 0.85) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(201, 162, 75, 0.35);
+  box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.5), 0 0 20px rgba(201, 162, 75, 0.15);
+}
+
+.glass-gold-subtle {
+  background: rgba(201, 162, 75, 0.08);
+  border: 1px solid rgba(201, 162, 75, 0.25);
+  backdrop-filter: blur(10px);
+}
+
+/* Glow Utilities */
+.gold-glow {
+  text-shadow: 0 0 20px rgba(201, 162, 75, 0.55), 0 0 40px rgba(201, 162, 75, 0.25);
+}
+
+.gold-box-glow {
+  box-shadow: 0 0 25px rgba(201, 162, 75, 0.35), inset 0 0 15px rgba(201, 162, 75, 0.15);
+}
+
+.maroon-box-glow {
+  box-shadow: 0 10px 25px -5px rgba(122, 31, 43, 0.5), 0 0 15px rgba(201, 162, 75, 0.2);
+}
+
+/* Mihrab Arch Shape */
+.mihrab-arch {
+  border-top-left-radius: 120px 140px;
+  border-top-right-radius: 120px 140px;
+}
+
+@media (min-width: 640px) {
+  .mihrab-arch {
+    border-top-left-radius: 200px 240px;
+    border-top-right-radius: 200px 240px;
+  }
+}
+
+/* Islamic Geometric Background Pattern Overlay (CSS SVG Data-URI) */
+.pattern-girih {
+  background-image: radial-gradient(rgba(201, 162, 75, 0.12) 1.5px, transparent 1.5px),
+                    radial-gradient(rgba(201, 162, 75, 0.06) 1.5px, transparent 1.5px);
+  background-size: 36px 36px;
+  background-position: 0 0, 18px 18px;
+}
+
+.pattern-islamic-stars {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill='%23C9A24B' fill-opacity='0.08'%3E%3Cpath d='M20 0 L24 16 L40 20 L24 24 L20 40 L16 24 L0 20 L16 16 Z'/%3E%3Ccircle cx='20' cy='20' r='2' fill='%23C9A24B' fill-opacity='0.15'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 40px 40px;
+}
+
+/* Custom Scrollbar for Luxury Look */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #06231A;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C9A24B;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #E5C365;
+}
+
+/* Animations */
+@keyframes lanternSway {
+  0%, 100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+}
+
+@keyframes floatGentle {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-sway {
+  transform-origin: top center;
+  animation: lanternSway 4s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: floatGentle 5s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+.shimmer-button {
+  background-size: 200% auto;
+  animation: shimmer 3s linear infinite;
+}

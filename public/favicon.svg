@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+  <defs>
+    <radialGradient id="emeraldBg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#134E3A" />
+      <stop offset="85%" stop-color="#0B3D2E" />
+      <stop offset="100%" stop-color="#06231A" />
+    </radialGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FBF6E9" />
+      <stop offset="25%" stop-color="#F3E6C4" />
+      <stop offset="60%" stop-color="#C9A24B" />
+      <stop offset="90%" stop-color="#9A7728" />
+      <stop offset="100%" stop-color="#6E5014" />
+    </linearGradient>
+    <filter id="goldGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="1.5" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Deep Emerald Background Disc -->
+  <circle cx="50" cy="50" r="48" fill="url(#emeraldBg)" stroke="url(#goldGrad)" stroke-width="2" />
+  <circle cx="50" cy="50" r="44" fill="none" stroke="url(#goldGrad)" stroke-width="0.75" stroke-dasharray="2,2" opacity="0.8" />
+
+  <!-- Botanical Wreath leaves left & right -->
+  <g fill="none" stroke="url(#goldGrad)" stroke-width="1.2" stroke-linecap="round" opacity="0.9">
+    <!-- Left wreath branch -->
+    <path d="M 50 12 C 30 12 18 28 18 50 C 18 72 30 88 50 88" />
+    <path d="M 43 14 Q 38 10 39 17 Q 44 19 43 14" fill="url(#goldGrad)" />
+    <path d="M 33 21 Q 28 18 30 25 Q 35 26 33 21" fill="url(#goldGrad)" />
+    <path d="M 25 32 Q 20 29 23 36 Q 28 36 25 32" fill="url(#goldGrad)" />
+    <path d="M 20 45 Q 14 43 18 50 Q 23 49 20 45" fill="url(#goldGrad)" />
+    <path d="M 20 57 Q 15 60 21 64 Q 25 61 20 57" fill="url(#goldGrad)" />
+    <path d="M 26 69 Q 22 74 29 76 Q 32 71 26 69" fill="url(#goldGrad)" />
+    <path d="M 35 79 Q 32 85 39 85 Q 41 80 35 79" fill="url(#goldGrad)" />
+
+    <!-- Right wreath branch -->
+    <path d="M 50 12 C 70 12 82 28 82 50 C 82 72 70 88 50 88" />
+    <path d="M 57 14 Q 62 10 61 17 Q 56 19 57 14" fill="url(#goldGrad)" />
+    <path d="M 67 21 Q 72 18 70 25 Q 65 26 67 21" fill="url(#goldGrad)" />
+    <path d="M 75 32 Q 80 29 77 36 Q 72 36 75 32" fill="url(#goldGrad)" />
+    <path d="M 80 45 Q 86 43 82 50 Q 77 49 80 45" fill="url(#goldGrad)" />
+    <path d="M 80 57 Q 85 60 79 64 Q 75 61 80 57" fill="url(#goldGrad)" />
+    <path d="M 74 69 Q 78 74 71 76 Q 68 71 74 69" fill="url(#goldGrad)" />
+    <path d="M 65 79 Q 68 85 61 85 Q 59 80 65 79" fill="url(#goldGrad)" />
+  </g>
+
+  <!-- Islamic 8-Point Star at top -->
+  <g transform="translate(50, 12) scale(0.6)" fill="url(#goldGrad)">
+    <polygon points="0,-6 4,-2 6,0 2,4 0,6 -2,4 -6,0 -4,-2" />
+    <polygon points="-4.24,-4.24 0,-3 4.24,-4.24 3,0 4.24,4.24 0,3 -4.24,4.24 -3,0" opacity="0.8" />
+  </g>
+
+  <!-- Monogram FF Script Center -->
+  <text x="50" y="58" font-family="'Cinzel', 'Playfair Display', Georgia, serif" font-size="28" font-weight="700" letter-spacing="2" text-anchor="middle" fill="url(#goldGrad)" filter="url(#goldGlow)">
+    FF
+  </text>
+  <text x="50" y="68" font-family="'Cinzel', serif" font-size="7" font-weight="600" letter-spacing="3" text-anchor="middle" fill="#F3E6C4" opacity="0.9">
+    12.12.26
+  </text>
+</svg>
