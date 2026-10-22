@@ -26,7 +26,7 @@ export default function WeddingScene({
   const rendererRef = useRef(null);
   const cameraRef = useRef(null);
   const doorsRef = useRef({ left: null, right: null, light: null, group: null });
-  const charactersRef = useRef({ groom: null, bride: null, group: null });
+  const orbsRef = useRef(null);
   const lanternsRef = useRef([]);
   const petalsRef = useRef(null);
   const starsRef = useRef(null);
@@ -327,6 +327,7 @@ export default function WeddingScene({
 
     const petalMesh = new THREE.InstancedMesh(petalGeo, petalMat, petalCount);
     const dummy = new THREE.Object3D();
+    const dummyOrb = new THREE.Object3D();
     const petalData = [];
 
     // Colors mix: 65% Rose petals, 35% Jasmine ivory petals
@@ -429,185 +430,128 @@ export default function WeddingScene({
       light: doorBurstLight,
     };
 
-    // --- 5. Two Stylised Faceless 3D Welcoming Characters ---
-    // (Groom in sherwani & embroidered topi; Bride in royal dupatta/veil)
-    const charactersGroup = new THREE.Group();
+    // --- 5. Royal Islamic Mihrab Pavilion & Architectural Archway ---
+    // A grand, sacred architectural background framing the celestial night sky
+    const archGroup = new THREE.Group();
 
-    // Groom (Left-center)
-    const createGroom = () => {
-      const groom = new THREE.Group();
+    // Elegant Multicusp Islamic Ogee Archway Profile
+    const archShape = new THREE.Shape();
+    const aw = 4.8;
+    const ah = 7.0;
+    archShape.moveTo(-aw, -ah);
+    archShape.lineTo(-aw, 0.5);
+    // Left arch curve
+    archShape.bezierCurveTo(-aw, 2.2, -aw * 0.55, 3.8, 0, 5.0);
+    // Right arch curve
+    archShape.bezierCurveTo(aw * 0.55, 3.8, aw, 2.2, aw, 0.5);
+    archShape.lineTo(aw, -ah);
+    archShape.lineTo(-aw, -ah);
 
-      // Lower body / Kurta flare
-      const coatGeo = new THREE.CylinderGeometry(0.38, 0.6, 1.8, 16);
-      const coatMesh = new THREE.Mesh(coatGeo, ivorySilkMat);
-      coatMesh.position.y = -0.5;
-      groom.add(coatMesh);
+    // Inner arch cutout to create grand portal opening
+    const innerHole = new THREE.Path();
+    const iaw = 3.6;
+    innerHole.moveTo(-iaw, -ah);
+    innerHole.lineTo(-iaw, 0.2);
+    innerHole.bezierCurveTo(-iaw, 1.8, -iaw * 0.55, 3.0, 0, 4.0);
+    innerHole.bezierCurveTo(iaw * 0.55, 3.0, iaw, 1.8, iaw, 0.2);
+    innerHole.lineTo(iaw, -ah);
+    innerHole.lineTo(-iaw, -ah);
+    archShape.holes.push(innerHole);
 
-      // Upper Torso / Sherwani
-      const torsoGeo = new THREE.CylinderGeometry(0.48, 0.42, 1.2, 16);
-      const torsoMesh = new THREE.Mesh(torsoGeo, ivorySilkMat);
-      torsoMesh.position.y = 0.8;
-      groom.add(torsoMesh);
-
-      // Gold Brocade Buttons Placket
-      const placketGeo = new THREE.BoxGeometry(0.08, 1.1, 0.04);
-      const placketMesh = new THREE.Mesh(placketGeo, goldMat);
-      placketMesh.position.set(0, 0.8, 0.46);
-      groom.add(placketMesh);
-
-      // Maroon Royal Stole / Dupatta draped over shoulder
-      const stoleGeo = new THREE.TorusGeometry(0.52, 0.09, 12, 18, Math.PI * 1.2);
-      const stoleMesh = new THREE.Mesh(stoleGeo, maroonSashMat);
-      stoleMesh.rotation.z = -0.5;
-      stoleMesh.rotation.y = 0.3;
-      stoleMesh.position.set(0.05, 1.0, 0.1);
-      groom.add(stoleMesh);
-
-      // Faceless Stylised Head (Smooth porcelain / gold-undertone mannequin)
-      const headGeo = new THREE.SphereGeometry(0.32, 24, 24);
-      headGeo.scale(0.85, 1.05, 0.95);
-      const headMesh = new THREE.Mesh(headGeo, ivorySilkMat);
-      headMesh.position.y = 1.65;
-      groom.add(headMesh);
-
-      // Traditional Groom Topi / Cap (Emerald velvet with gold rim)
-      const capGeo = new THREE.CylinderGeometry(0.31, 0.33, 0.28, 16);
-      const capMesh = new THREE.Mesh(capGeo, emeraldVelvetMat);
-      capMesh.position.y = 1.95;
-      groom.add(capMesh);
-
-      const capRimGeo = new THREE.TorusGeometry(0.32, 0.035, 12, 24);
-      const capRimMesh = new THREE.Mesh(capRimGeo, goldMat);
-      capRimMesh.rotation.x = Math.PI * 0.5;
-      capRimMesh.position.y = 1.82;
-      groom.add(capRimMesh);
-
-      // Right Arm: Raised gracefully to heart in "Assalamu Alaikum" posture
-      const armUpperGeo = new THREE.CylinderGeometry(0.1, 0.11, 0.65, 12);
-      const armUpper = new THREE.Mesh(armUpperGeo, ivorySilkMat);
-      armUpper.position.set(0.48, 0.8, 0.2);
-      armUpper.rotation.z = -0.6;
-      armUpper.rotation.x = 0.3;
-      groom.add(armUpper);
-
-      const armForeGeo = new THREE.CylinderGeometry(0.09, 0.1, 0.6, 12);
-      const armFore = new THREE.Mesh(armForeGeo, ivorySilkMat);
-      armFore.position.set(0.2, 0.85, 0.5);
-      armFore.rotation.z = 1.1;
-      armFore.rotation.y = -0.4;
-      groom.add(armFore);
-
-      // Stylised Faceless Hand on heart
-      const handGeo = new THREE.SphereGeometry(0.12, 12, 12);
-      handGeo.scale(1.2, 0.5, 1.5);
-      const handMesh = new THREE.Mesh(handGeo, ivorySilkMat);
-      handMesh.position.set(0.02, 0.95, 0.52);
-      groom.add(handMesh);
-
-      // Left Arm: Gracefully relaxed at side
-      const leftArm = new THREE.Mesh(armUpperGeo, ivorySilkMat);
-      leftArm.position.set(-0.52, 0.7, 0);
-      leftArm.rotation.z = 0.25;
-      groom.add(leftArm);
-
-      groom.position.set(-1.4, -1.8, 0.5);
-      groom.scale.set(0.9, 0.9, 0.9);
-      groom.rotation.y = 0.28;
-      return groom;
+    const archExtrude = {
+      depth: 0.35,
+      bevelEnabled: true,
+      bevelSegments: 4,
+      steps: 1,
+      bevelSize: 0.06,
+      bevelThickness: 0.06,
     };
 
-    // Bride (Right-center)
-    const createBride = () => {
-      const bride = new THREE.Group();
+    const archGeo = new THREE.ExtrudeGeometry(archShape, archExtrude);
+    const archMesh = new THREE.Mesh(archGeo, emeraldVelvetMat);
+    archMesh.position.set(0, -1.0, -3.2);
+    archGroup.add(archMesh);
 
-      // Flared Royal Anarkali Gown
-      const skirtGeo = new THREE.ConeGeometry(0.95, 2.2, 24);
-      const skirtMesh = new THREE.Mesh(skirtGeo, emeraldVelvetMat);
-      skirtMesh.position.y = -0.4;
-      bride.add(skirtMesh);
+    // Gold Trim Lining along the inner arch
+    const archTrimGeo = new THREE.TorusGeometry(3.6, 0.06, 12, 48, Math.PI);
+    const archTrim = new THREE.Mesh(archTrimGeo, goldMat);
+    archTrim.position.set(0, 0.4, -3.0);
+    archGroup.add(archTrim);
 
-      // Gold embroidered border along hem
-      const hemGeo = new THREE.TorusGeometry(0.92, 0.05, 12, 32);
-      const hemMesh = new THREE.Mesh(hemGeo, goldMat);
-      hemMesh.rotation.x = Math.PI * 0.5;
-      hemMesh.position.y = -1.48;
-      bride.add(hemMesh);
+    // Twin Royal Architectural Columns on Left & Right
+    const createColumn = (xPos) => {
+      const col = new THREE.Group();
+      // Main Fluted Pillar Shaft
+      const shaftGeo = new THREE.CylinderGeometry(0.32, 0.35, 7.5, 24);
+      const shaft = new THREE.Mesh(shaftGeo, emeraldVelvetMat);
+      col.add(shaft);
 
-      // Upper Bodice
-      const bodiceGeo = new THREE.CylinderGeometry(0.38, 0.36, 1.0, 16);
-      const bodiceMesh = new THREE.Mesh(bodiceGeo, emeraldVelvetMat);
-      bodiceMesh.position.y = 0.85;
-      bride.add(bodiceMesh);
+      // Gold Column Base
+      const baseGeo = new THREE.CylinderGeometry(0.52, 0.58, 0.45, 16);
+      const base = new THREE.Mesh(baseGeo, goldMat);
+      base.position.y = -3.75;
+      col.add(base);
 
-      // Gold Neckline Choker / Jewelry Accent
-      const necklaceGeo = new THREE.TorusGeometry(0.32, 0.04, 12, 24);
-      const necklaceMesh = new THREE.Mesh(necklaceGeo, goldMat);
-      necklaceMesh.rotation.x = Math.PI * 0.5;
-      necklaceMesh.position.set(0, 1.3, 0.1);
-      bride.add(necklaceMesh);
+      // Gold Column Capital with Mughal Carved Tier
+      const capGeo = new THREE.CylinderGeometry(0.55, 0.36, 0.5, 16);
+      const cap = new THREE.Mesh(capGeo, goldMat);
+      cap.position.y = 3.75;
+      col.add(cap);
 
-      // Faceless Stylised Head
-      const headGeo = new THREE.SphereGeometry(0.29, 24, 24);
-      headGeo.scale(0.85, 1.05, 0.95);
-      const headMesh = new THREE.Mesh(headGeo, ivorySilkMat);
-      headMesh.position.y = 1.62;
-      bride.add(headMesh);
+      // Minaret Dome Finial on top
+      const domeGeo = new THREE.SphereGeometry(0.42, 16, 16, 0, Math.PI * 2, 0, Math.PI * 0.5);
+      const dome = new THREE.Mesh(domeGeo, goldMat);
+      dome.position.y = 4.0;
+      col.add(dome);
 
-      // Flowing Dupatta / Bridal Veil covering head and cascading shoulders
-      const veilGeo = new THREE.SphereGeometry(0.46, 20, 20, 0, Math.PI * 2, 0, Math.PI * 0.65);
-      const veilMat = new THREE.MeshStandardMaterial({
-        color: 0x134e3a,
-        roughness: 0.5,
-        metalness: 0.2,
-        side: THREE.DoubleSide,
+      const finialGeo = new THREE.ConeGeometry(0.08, 0.6, 8);
+      const finial = new THREE.Mesh(finialGeo, darkGoldMat);
+      finial.position.y = 4.55;
+      col.add(finial);
+
+      col.position.set(xPos, -0.6, -3.0);
+      return col;
+    };
+
+    archGroup.add(createColumn(-4.0));
+    archGroup.add(createColumn(4.0));
+
+    // Divine Radiant Nur Halo Backlight emitting from the arch peak
+    const nurBacklight = new THREE.PointLight(0xffe29a, 2.5, 12);
+    nurBacklight.position.set(0, 2.8, -3.4);
+    archGroup.add(nurBacklight);
+
+    scene.add(archGroup);
+
+    // --- 6. Floating Barakah & Nur Light Orbs (Luminous Sacred Bokeh) ---
+    const orbCount = 38;
+    const orbGeo = new THREE.SphereGeometry(0.09, 12, 12);
+    const orbMat = new THREE.MeshStandardMaterial({
+      color: 0xffe89e,
+      emissive: 0xf59e0b,
+      emissiveIntensity: 0.9,
+      roughness: 0.2,
+      metalness: 0.8,
+      transparent: true,
+      opacity: 0.75,
+    });
+
+    const orbMesh = new THREE.InstancedMesh(orbGeo, orbMat, orbCount);
+    const orbData = [];
+
+    for (let i = 0; i < orbCount; i++) {
+      orbData.push({
+        x: (Math.random() - 0.5) * 12,
+        y: (Math.random() - 0.5) * 10,
+        z: -1.5 - Math.random() * 3.5,
+        scale: 0.6 + Math.random() * 1.4,
+        speedY: 0.006 + Math.random() * 0.012,
+        swaySpeed: 0.8 + Math.random() * 1.5,
       });
-      const veilMesh = new THREE.Mesh(veilGeo, veilMat);
-      veilMesh.position.set(0, 1.55, -0.05);
-      bride.add(veilMesh);
+    }
 
-      // Gold Filigree Mathapatti / Head Border
-      const headBorderGeo = new THREE.TorusGeometry(0.38, 0.03, 12, 24, Math.PI);
-      const headBorderMesh = new THREE.Mesh(headBorderGeo, goldMat);
-      headBorderMesh.position.set(0, 1.76, 0.22);
-      headBorderMesh.rotation.x = 0.2;
-      bride.add(headBorderMesh);
-
-      // Gracefully folded hands in warm adab greeting
-      const handsGeo = new THREE.SphereGeometry(0.14, 12, 12);
-      handsGeo.scale(1.4, 0.6, 0.8);
-      const handsMesh = new THREE.Mesh(handsGeo, ivorySilkMat);
-      handsMesh.position.set(0, 0.72, 0.42);
-      bride.add(handsMesh);
-
-      // Gold Bangles on wrists
-      const bangleGeo = new THREE.TorusGeometry(0.12, 0.025, 8, 16);
-      const bangleLeft = new THREE.Mesh(bangleGeo, goldMat);
-      bangleLeft.position.set(-0.16, 0.72, 0.38);
-      bride.add(bangleLeft);
-
-      const bangleRight = new THREE.Mesh(bangleGeo, goldMat);
-      bangleRight.position.set(0.16, 0.72, 0.38);
-      bride.add(bangleRight);
-
-      bride.position.set(1.4, -1.8, 0.5);
-      bride.scale.set(0.88, 0.88, 0.88);
-      bride.rotation.y = -0.28;
-      return bride;
-    };
-
-    const groomMesh = createGroom();
-    const brideMesh = createBride();
-
-    charactersGroup.add(groomMesh);
-    charactersGroup.add(brideMesh);
-    charactersGroup.position.set(0, -0.2, 0);
-
-    scene.add(charactersGroup);
-    charactersRef.current = {
-      group: charactersGroup,
-      groom: groomMesh,
-      bride: brideMesh,
-    };
+    scene.add(orbMesh);
+    orbsRef.current = { mesh: orbMesh, data: orbData };
 
     // --- Interaction / Parallax Setup ---
     const handlePointerMove = (e) => {
@@ -717,11 +661,27 @@ export default function WeddingScene({
         mesh.instanceMatrix.needsUpdate = true;
       }
 
-      // Characters Breathing and Greeting subtle motion
-      if (charactersRef.current.groom && charactersRef.current.bride) {
-        const breath = Math.sin(elapsedTime * 2.2) * 0.02;
-        charactersRef.current.groom.position.y = -1.8 + breath;
-        charactersRef.current.bride.position.y = -1.8 + breath * 0.8;
+      // Floating Barakah & Nur Light Orbs Motion
+      if (orbsRef.current && orbsRef.current.data) {
+        const { mesh, data } = orbsRef.current;
+        for (let i = 0; i < data.length; i++) {
+          const orb = data[i];
+          orb.y += orb.speedY;
+          orb.x += Math.sin(elapsedTime * orb.swaySpeed + i) * 0.003;
+
+          // Recycle when rising off the top
+          if (orb.y > 6.0) {
+            orb.y = -5.0;
+            orb.x = (Math.random() - 0.5) * 12;
+          }
+
+          dummyOrb.position.set(orb.x, orb.y, orb.z);
+          const pulse = 1 + Math.sin(elapsedTime * 2.5 + i) * 0.2;
+          dummyOrb.scale.setScalar(orb.scale * pulse);
+          dummyOrb.updateMatrix();
+          mesh.setMatrixAt(i, dummyOrb.matrix);
+        }
+        mesh.instanceMatrix.needsUpdate = true;
       }
 
       renderer.render(scene, camera);
@@ -750,23 +710,23 @@ export default function WeddingScene({
     if (!doorsRef.current.left || !doorsRef.current.right) return;
 
     if (isGateOpen) {
-      // Swing doors outward smoothly
+      // Swing doors outward smoothly in 1.1s
       gsap.to(doorsRef.current.left.rotation, {
         y: -Math.PI * 0.65,
-        duration: 2.2,
-        ease: 'power3.inOut',
+        duration: 1.1,
+        ease: 'power2.out',
       });
       gsap.to(doorsRef.current.right.rotation, {
         y: Math.PI * 0.65,
-        duration: 2.2,
-        ease: 'power3.inOut',
+        duration: 1.1,
+        ease: 'power2.out',
       });
 
       // Flood with golden volumetric light
       if (doorsRef.current.light) {
         gsap.to(doorsRef.current.light, {
-          intensity: 6.0,
-          duration: 1.2,
+          intensity: 5.0,
+          duration: 0.7,
           yoyo: true,
           repeat: 1,
           ease: 'power2.out',
@@ -776,8 +736,8 @@ export default function WeddingScene({
       // Dolly camera forward slightly
       if (cameraRef.current) {
         gsap.to(cameraRef.current.position, {
-          z: 7.2,
-          duration: 2.4,
+          z: 7.6,
+          duration: 1.3,
           ease: 'power2.out',
         });
       }
@@ -786,8 +746,8 @@ export default function WeddingScene({
       if (doorsRef.current.group) {
         gsap.to(doorsRef.current.group.position, {
           y: -15,
-          delay: 1.8,
-          duration: 1.4,
+          delay: 0.9,
+          duration: 0.6,
           ease: 'power2.in',
         });
       }

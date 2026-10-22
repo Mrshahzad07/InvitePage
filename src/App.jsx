@@ -142,8 +142,6 @@ export default function App() {
     setGateState('opened');
   };
 
-  const isContentRevealed = gateState === 'opened';
-
   return (
     <div className="relative min-h-screen bg-[#06231A] text-[#FBF6E9] selection:bg-[#C9A24B] selection:text-[#06231A] overflow-x-hidden">
       {/* Persistent 3D Three.js Master Scene */}
@@ -166,14 +164,24 @@ export default function App() {
         />
       )}
 
-      {/* MAIN INVITATION CONTENT: Revealed ONLY after the gate has finished opening */}
-      {isContentRevealed && (
-        <main
-          className="relative z-10 transition-opacity duration-1000 ease-out opacity-100 pb-28 animate-in fade-in zoom-in-98"
-        >
-          {/* Quick Floating Navbar */}
-          <Navbar onNavigateSection={handleNavigateSection} />
+      {/* FIXED TOP NAVBAR: Always attached to viewport while scrolling */}
+      {!isLoading && gateState === 'opened' && (
+        <Navbar onNavigateSection={handleNavigateSection} />
+      )}
 
+      {/* MAIN INVITATION CONTENT: Pre-rendered & ready behind gate; glides up smoothly as doors part */}
+      {!isLoading && (
+        <main
+          id="invitation-main-content"
+          aria-hidden={gateState !== 'opened'}
+          className={`relative z-10 pb-28 transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            gateState === 'closed'
+              ? 'opacity-0 scale-[0.98] translate-y-7 pointer-events-none'
+              : gateState === 'opening'
+              ? 'opacity-100 scale-100 translate-y-0 pointer-events-none'
+              : 'opacity-100 pointer-events-auto'
+          }`}
+        >
           {/* SECTION 2: Hero (With Full Names: Md. Firoj & Farha Praveen) */}
           <Hero
             guestInfo={guestInfo}
@@ -203,13 +211,15 @@ export default function App() {
 
           {/* SECTION 10: Footer (Closing compliments, Dua & Shooting star) */}
           <Footer />
-
-          {/* Floating Audio Controller */}
-          <AudioToggle />
-
-          {/* Bottom Quick Action Dock for effortless navigation */}
-          <QuickDock onNavigateSection={handleNavigateSection} />
         </main>
+      )}
+
+      {/* FIXED BOTTOM FLOATING CONTROLS: Always attached to viewport, stays fixed at bottom while scrolling */}
+      {!isLoading && gateState === 'opened' && (
+        <>
+          <AudioToggle />
+          <QuickDock onNavigateSection={handleNavigateSection} />
+        </>
       )}
     </div>
   );

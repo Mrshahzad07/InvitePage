@@ -73,7 +73,7 @@ export default function IntroGate({ guestInfo, onUpdateGuestName, onOpenStart, o
       typeof window !== 'undefined' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    const animDuration = prefersReducedMotion ? 100 : 1850;
+    const animDuration = prefersReducedMotion ? 100 : 1100;
 
     // Haptic feedback on mobile if supported
     if (!prefersReducedMotion && typeof window !== 'undefined' && 'vibrate' in navigator) {
@@ -92,8 +92,8 @@ export default function IntroGate({ guestInfo, onUpdateGuestName, onOpenStart, o
       colors: ['#C9A24B', '#F3E6C4', '#7A1F2B', '#134E3A'],
     });
 
-    // Controlled synchronization: transition takes 1.8s
-    // Complete the gate opening ONLY after the 3D swing has fully concluded
+    // Controlled synchronization: transition takes 1.1s
+    // Complete the gate opening smoothly as the 3D doors swing open
     const timer = setTimeout(() => {
       setInternalState('opened');
       if (onOpenComplete) onOpenComplete();
@@ -108,7 +108,7 @@ export default function IntroGate({ guestInfo, onUpdateGuestName, onOpenStart, o
 
   return (
     <div
-      className={`fixed inset-0 z-50 overflow-hidden flex items-center justify-center transition-opacity duration-700 ${
+      className={`fixed inset-0 z-50 overflow-y-auto overflow-x-hidden flex flex-col items-center justify-start sm:justify-center p-2 xs:p-3 sm:p-4 py-4 sm:py-8 transition-opacity duration-700 ${
         isOpening ? 'pointer-events-none' : ''
       }`}
       style={{ perspective: '1400px' }}
@@ -116,17 +116,21 @@ export default function IntroGate({ guestInfo, onUpdateGuestName, onOpenStart, o
       role="dialog"
       aria-label="Wedding Gate Invitation"
     >
-      {/* Background Deep Glow Curtain */}
-      <div className="absolute inset-0 bg-[#06231A] z-0" />
+      {/* Background Soft Glow Curtain - Fades away smoothly as doors part */}
+      <div
+        className={`fixed inset-0 bg-[#06231A]/85 backdrop-blur-[2px] transition-opacity duration-700 pointer-events-none z-0 ${
+          isOpening ? 'opacity-0' : 'opacity-100'
+        }`}
+      />
 
       {/* LEFT 3D DOOR PANEL */}
       <div
         ref={leftDoorRef}
-        className="absolute top-0 left-0 w-1/2 h-full z-20 origin-left border-r-2 border-[#E5C365]/80 shadow-[10px_0_40px_rgba(0,0,0,0.9)] overflow-hidden transition-transform duration-[1800ms] ease-[cubic-bezier(0.25,1,0.5,1)]"
+        className="fixed top-0 left-0 w-1/2 h-full z-20 origin-left border-r-2 border-[#E5C365]/80 shadow-[10px_0_40px_rgba(0,0,0,0.9)] overflow-hidden transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
         style={{
           transformStyle: 'preserve-3d',
           transform: isOpening
-            ? 'rotateY(-105deg)'
+            ? 'rotateY(-112deg)'
             : 'rotateY(0deg)',
           background: 'linear-gradient(135deg, #7A1F2B 0%, #4A121A 40%, #0B3D2E 100%)',
         }}
@@ -150,11 +154,11 @@ export default function IntroGate({ guestInfo, onUpdateGuestName, onOpenStart, o
       {/* RIGHT 3D DOOR PANEL */}
       <div
         ref={rightDoorRef}
-        className="absolute top-0 right-0 w-1/2 h-full z-20 origin-right border-l-2 border-[#E5C365]/80 shadow-[-10px_0_40px_rgba(0,0,0,0.9)] overflow-hidden transition-transform duration-[1800ms] ease-[cubic-bezier(0.25,1,0.5,1)]"
+        className="fixed top-0 right-0 w-1/2 h-full z-20 origin-right border-l-2 border-[#E5C365]/80 shadow-[-10px_0_40px_rgba(0,0,0,0.9)] overflow-hidden transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
         style={{
           transformStyle: 'preserve-3d',
           transform: isOpening
-            ? 'rotateY(105deg)'
+            ? 'rotateY(112deg)'
             : 'rotateY(0deg)',
           background: 'linear-gradient(225deg, #7A1F2B 0%, #4A121A 40%, #0B3D2E 100%)',
         }}
@@ -177,57 +181,57 @@ export default function IntroGate({ guestInfo, onUpdateGuestName, onOpenStart, o
 
       {/* GOLDEN VOLUMETRIC LIGHT BURST (Beams out when opening) */}
       <div
-        className={`absolute inset-0 z-25 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#FFFDF8] via-[#E5C365]/60 to-transparent transition-opacity duration-1000 pointer-events-none ${
+        className={`fixed inset-0 z-25 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#FFFDF8] via-[#E5C365]/60 to-transparent transition-opacity duration-1000 pointer-events-none ${
           isOpening ? 'opacity-90 scale-125' : 'opacity-0'
         }`}
       />
 
       {/* CENTER ROYAL INVITATION PRESENTATION SHIELD */}
-      {/* (Sits gracefully in front of the gate seam; fades smoothly when opening) */}
+      {/* Sits gracefully in front of the gate seam; fully responsive to fit each and every screen device */}
       <div
-        className={`relative z-30 max-w-lg w-[92%] sm:w-full mx-auto my-auto p-5 sm:p-7 rounded-3xl glass-emerald-card border-2 border-[#E5C365] shadow-[0_20px_60px_rgba(0,0,0,0.95)] text-center transition-all duration-700 ${
-          isOpening ? 'opacity-0 scale-90 pointer-events-none' : 'opacity-100 scale-100'
+        className={`relative z-30 max-w-md w-full mx-auto my-auto p-4 sm:p-6 rounded-3xl glass-emerald-card border-2 border-[#E5C365] shadow-[0_20px_60px_rgba(0,0,0,0.95)] text-center transition-all duration-500 ${
+          isOpening ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100'
         }`}
       >
         {/* Top Arch Crown & Star Finial */}
         <div className="flex items-center justify-center gap-2 mb-1">
-          <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-[#C9A24B]" />
-          <Star className="w-4 h-4 text-[#E5C365] fill-[#E5C365]" />
-          <span className="font-cinzel text-[10px] sm:text-xs text-[#E5C365] font-bold tracking-[0.25em] uppercase">
+          <div className="h-[1px] w-8 sm:w-12 bg-gradient-to-r from-transparent to-[#C9A24B]" />
+          <Star className="w-3.5 h-3.5 text-[#E5C365] fill-[#E5C365]" />
+          <span className="font-cinzel text-[10px] sm:text-xs text-[#E5C365] font-bold tracking-[0.2em] uppercase">
             {t.introGate.badge}
           </span>
-          <Star className="w-4 h-4 text-[#E5C365] fill-[#E5C365]" />
-          <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-[#C9A24B]" />
+          <Star className="w-3.5 h-3.5 text-[#E5C365] fill-[#E5C365]" />
+          <div className="h-[1px] w-8 sm:w-12 bg-gradient-to-l from-transparent to-[#C9A24B]" />
         </div>
 
         {/* Multi-Language Selection Pill (English • हिन्दी • اردو) */}
         <LanguageSwitcher variant="gate" />
 
         {/* Sacred Bismillah */}
-        <p className="font-arabic text-xl sm:text-2xl text-[#C9A24B] tracking-wide mb-1">
+        <p className="font-arabic text-lg sm:text-2xl text-[#C9A24B] tracking-wide my-0.5">
           {weddingData.bismillah.arabic}
         </p>
 
         {/* Spiritual Welcome Header */}
-        <p className={`italic text-sm sm:text-base text-[#F3E6C4]/90 mb-2 ${isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : 'font-cormorant'}`}>
+        <p className={`italic text-xs sm:text-sm text-[#F3E6C4]/90 mb-1.5 ${isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : 'font-cormorant'}`}>
           {t.introGate.subBadge}
         </p>
 
-        {/* 3D CARTOON BRIDE & GROOM WELCOME PREVIEW */}
-        <div className="relative my-2 flex justify-center">
-          <div className="relative group p-1.5 rounded-2xl bg-gradient-to-tr from-[#7A1F2B] via-[#C9A24B] to-[#0B3D2E] shadow-[0_0_30px_rgba(201,162,75,0.45)] border border-[#E5C365] animate-float">
+        {/* 3D CARTOON BRIDE & GROOM WELCOME PREVIEW (Height responsive so it never pushes buttons off screen) */}
+        <div className="relative my-1.5 sm:my-2 flex justify-center">
+          <div className="relative group p-1 sm:p-1.5 rounded-2xl bg-gradient-to-tr from-[#7A1F2B] via-[#C9A24B] to-[#0B3D2E] shadow-[0_0_25px_rgba(201,162,75,0.45)] border border-[#E5C365]">
             <img
               src="/couple-cartoon.jpg"
               alt="Cartoon 3D Muslim Wedding Couple - Md. Firoj & Farha Praveen"
-              className="w-48 h-48 sm:w-56 sm:h-56 object-cover rounded-xl filter brightness-105"
+              className="w-32 h-32 xs:w-36 xs:h-36 sm:w-48 sm:h-48 md:w-52 md:h-52 max-h-[22vh] object-cover rounded-xl filter brightness-105"
             />
             {/* Wax Seal Monogram Badge */}
-            <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-[#06231A] border-2 border-[#E5C365] shadow-lg flex items-center gap-1.5">
-              <span className="font-cinzel text-xs font-bold text-gold-bright tracking-widest">
+            <div className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full bg-[#06231A] border-2 border-[#E5C365] shadow-lg flex items-center gap-1.5 whitespace-nowrap">
+              <span className="font-cinzel text-[10px] sm:text-xs font-bold text-gold-bright tracking-widest">
                 {weddingData.meta.monogram}
               </span>
               <span className="w-1.5 h-1.5 rounded-full bg-[#E5C365]" />
-              <span className="font-cinzel text-[9px] text-[#F3E6C4] tracking-wider uppercase font-semibold">
+              <span className="font-cinzel text-[8px] sm:text-[9px] text-[#F3E6C4] tracking-wider uppercase font-semibold">
                 12.12.2026
               </span>
             </div>
@@ -235,28 +239,28 @@ export default function IntroGate({ guestInfo, onUpdateGuestName, onOpenStart, o
         </div>
 
         {/* BOTH COMPLETE FULL NAMES - DULHAN (Farha Praveen) FIRST, THEN DULHA (Md. Firoj) */}
-        <div className="mt-4 mb-2">
-          <h2 className={`${isUrdu ? 'font-urdu text-2xl sm:text-3xl' : isHindi ? 'font-poppins font-bold text-2xl sm:text-3xl' : 'font-script text-3xl sm:text-4xl md:text-5xl'} text-gold-bright leading-tight filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]`}>
+        <div className="mt-2.5 sm:mt-3 mb-1 sm:mb-2">
+          <h2 className={`${isUrdu ? 'font-urdu text-xl sm:text-2xl' : isHindi ? 'font-poppins font-bold text-xl sm:text-2xl' : 'font-script text-2xl xs:text-3xl sm:text-4xl'} text-gold-bright leading-tight filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]`}>
             {t.couple.brideFull}
           </h2>
-          <span className="font-cormorant italic text-lg sm:text-xl text-[#F3E6C4] px-2">
+          <span className="font-cormorant italic text-sm sm:text-base text-[#F3E6C4] px-1.5">
             {t.hero.connector || '&'}
           </span>
-          <h2 className={`${isUrdu ? 'font-urdu text-2xl sm:text-3xl' : isHindi ? 'font-poppins font-bold text-2xl sm:text-3xl' : 'font-script text-3xl sm:text-4xl md:text-5xl'} text-gold-bright leading-tight filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]`}>
+          <h2 className={`${isUrdu ? 'font-urdu text-xl sm:text-2xl' : isHindi ? 'font-poppins font-bold text-xl sm:text-2xl' : 'font-script text-2xl xs:text-3xl sm:text-4xl'} text-gold-bright leading-tight filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]`}>
             {t.couple.groomFull}
           </h2>
-          <p className="font-poppins text-xs text-[#F3E6C4]/80 mt-1">
+          <p className="font-poppins text-[10px] sm:text-xs text-[#F3E6C4]/80 mt-0.5">
             {t.introGate.inviteLine}
           </p>
         </div>
 
         {/* Mandatory Visitor / Guest Name Input */}
-        <div className={`my-2.5 p-3.5 rounded-2xl bg-[#06231A]/95 max-w-sm mx-auto text-left shadow-lg transition-all duration-300 border-2 ${
+        <div className={`my-2 sm:my-2.5 p-2.5 sm:p-3 rounded-2xl bg-[#06231A]/95 max-w-sm mx-auto text-left shadow-lg transition-all duration-300 border-2 ${
           nameError
             ? 'border-amber-400 shadow-[0_0_20px_rgba(251,191,36,0.6)] animate-pulse'
             : 'border-[#E5C365]/70 focus-within:border-[#E5C365]'
         }`}>
-          <label htmlFor="gate-visitor-name" className="block font-cinzel text-[11px] text-[#E5C365] font-bold tracking-wider uppercase mb-1">
+          <label htmlFor="gate-visitor-name" className="block font-cinzel text-[10px] sm:text-[11px] text-[#E5C365] font-bold tracking-wider uppercase mb-1">
             {t.introGate.nameLabel} <span className="text-amber-400">*</span>
           </label>
           <input
@@ -269,15 +273,15 @@ export default function IntroGate({ guestInfo, onUpdateGuestName, onOpenStart, o
               if (e.key === 'Enter') handleOpenGate();
             }}
             placeholder={t.introGate.namePlaceholder}
-            className="w-full px-3.5 py-2 rounded-xl bg-[#0B3D2E] border border-[#C9A24B]/50 text-[#FFFDF8] placeholder-[#F3E6C4]/40 font-poppins text-xs sm:text-sm focus:outline-none focus:border-[#E5C365] shadow-inner"
+            className="w-full px-3 py-1.5 sm:py-2 rounded-xl bg-[#0B3D2E] border border-[#C9A24B]/50 text-[#FFFDF8] placeholder-[#F3E6C4]/40 font-poppins text-xs sm:text-sm focus:outline-none focus:border-[#E5C365] shadow-inner"
           />
 
           {nameError ? (
-            <p className="font-poppins text-[11px] text-amber-300 font-semibold mt-1.5 flex items-center gap-1.5">
+            <p className="font-poppins text-[10px] sm:text-[11px] text-amber-300 font-semibold mt-1 flex items-center gap-1.5">
               {t.introGate.nameError}
             </p>
           ) : (
-            <p className="font-poppins text-[10px] text-[#F3E6C4]/80 mt-1">
+            <p className="font-poppins text-[9px] sm:text-[10px] text-[#F3E6C4]/80 mt-1 truncate">
               {enteredName.trim()
                 ? `${t.introGate.greetingPrefix} ${guestInfo.salutation} ${enteredName.trim()}`
                 : t.introGate.nameRequiredHint}
@@ -286,25 +290,25 @@ export default function IntroGate({ guestInfo, onUpdateGuestName, onOpenStart, o
         </div>
 
         {/* Date & Venue Tag */}
-        <p className="font-cinzel text-xs text-[#E5C365] tracking-[0.18em] uppercase font-semibold mb-4">
+        <p className="font-cinzel text-[10px] sm:text-xs text-[#E5C365] tracking-[0.16em] uppercase font-semibold mb-2 sm:mb-3">
           12.12.2026 • {t.venue.hallName}
         </p>
 
-        {/* "Open Wedding Invitation" 3D Glowing Button */}
+        {/* "Open Wedding Invitation" 3D Glowing Button - Always completely visible on all mobile screens */}
         <button
           onClick={handleOpenGate}
           disabled={isOpening}
-          className="group relative w-full py-4 px-6 rounded-2xl font-cinzel font-bold text-sm sm:text-base tracking-[0.15em] uppercase text-[#06231A] bg-gradient-to-r from-[#F3E6C4] via-[#E5C365] to-[#C9A24B] hover:brightness-110 shadow-[0_8px_30px_rgba(201,162,75,0.5)] active:scale-95 transition-all duration-200 flex items-center justify-center gap-2.5 cursor-pointer border-2 border-[#FFFDF8]/40"
+          className="group relative w-full py-3 sm:py-3.5 px-4 sm:px-6 rounded-2xl font-cinzel font-bold text-xs sm:text-sm tracking-[0.14em] uppercase text-[#06231A] bg-gradient-to-r from-[#F3E6C4] via-[#E5C365] to-[#C9A24B] hover:brightness-110 shadow-[0_8px_30px_rgba(201,162,75,0.5)] active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer border-2 border-[#FFFDF8]/40"
         >
-          <Sparkles className="w-5 h-5 text-[#06231A] animate-spin" />
-          <span className={isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : ''}>
+          <Sparkles className="w-4 h-4 text-[#06231A] animate-spin shrink-0" />
+          <span className={`truncate ${isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : ''}`}>
             {isOpening
               ? t.introGate.openingButton
               : enteredName.trim()
               ? `${t.introGate.openButton} ${enteredName.trim()}`
               : t.introGate.openDefaultButton}
           </span>
-          <ChevronRight className="w-5 h-5 text-[#06231A] group-hover:translate-x-1 transition-transform" />
+          <ChevronRight className="w-4 h-4 text-[#06231A] group-hover:translate-x-1 transition-transform shrink-0" />
         </button>
       </div>
     </div>

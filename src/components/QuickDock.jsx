@@ -21,7 +21,7 @@ export default function QuickDock({ onNavigateSection }) {
   return (
     <aside
       aria-label="Quick Actions"
-      className="fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom,0px))] left-1/2 -translate-x-1/2 z-40 max-w-md w-[92%] sm:w-auto px-4 py-2.5 rounded-full bg-[#06231A]/95 backdrop-blur-xl border-2 border-[#C9A24B]/70 shadow-[0_15px_35px_rgba(0,0,0,0.85)] flex items-center justify-around sm:justify-center sm:gap-6"
+      className="fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom,0px))] sm:bottom-5 left-1/2 -translate-x-1/2 z-40 max-w-md w-[92%] sm:w-auto px-4 py-2.5 rounded-full bg-[#06231A]/95 backdrop-blur-xl border-2 border-[#C9A24B]/70 shadow-[0_15px_35px_rgba(0,0,0,0.85)] flex items-center justify-around sm:justify-center sm:gap-6"
     >
       {/* 1. Call Host */}
       <a

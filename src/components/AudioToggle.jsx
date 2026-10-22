@@ -32,7 +32,7 @@ export default function AudioToggle() {
 
   return (
     <div
-      className="fixed z-40 right-3 sm:right-6 bottom-[calc(4.8rem+env(safe-area-inset-bottom,0px))] sm:bottom-6 transition-all duration-300"
+      className="fixed z-40 right-3 sm:right-6 bottom-[calc(4.8rem+env(safe-area-inset-bottom,0px))] sm:bottom-5 transition-all duration-300"
     >
       <button
         onClick={toggleSound}
