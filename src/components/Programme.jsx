@@ -14,15 +14,16 @@ import {
 } from 'lucide-react';
 import { weddingData } from '../data/invitation';
 import { downloadAllEventsIcs, getGoogleCalendarUrl } from '../utils/calendar';
+import { useLanguage } from '../context/LanguageContext';
 
 const iconMap = {
-  BookOpen,
-  Sun,
-  Sparkles,
-  Utensils,
-  Compass,
-  HeartHandshake,
-  Sunrise,
+  milad: BookOpen,
+  haldi: Sun,
+  mehndi: Sparkles,
+  dinner: Utensils,
+  barat: Compass,
+  nikah: HeartHandshake,
+  rukhsati: Sunrise,
 };
 
 /**
@@ -31,21 +32,39 @@ const iconMap = {
  * - Fixed overlap issue completely: dates are placed prominently inside the card
  * - Day filter pills for easy navigation
  * - Direct Google Calendar & ICS download links
+ * - Multi-language support (English, हिन्दी, اردو)
  */
 export default function Programme({ onHoverEvent }) {
+  const { t, isUrdu, isHindi } = useLanguage();
   const [activeDay, setActiveDay] = useState('all');
 
   const daysList = [
-    { id: '1', shortDay: 'Day 1 • 10 Dec', ceremony: 'Milad & Haldi' },
-    { id: '2', shortDay: 'Day 2 • 11 Dec', ceremony: 'Rasm-E-Mehndi' },
-    { id: '3', shortDay: 'Day 3 • 12 Dec', ceremony: 'Nikah Night' },
-    { id: '4', shortDay: 'Day 4 • 13 Dec', ceremony: 'Rukhsati' },
+    { id: '1', shortDay: t.programme.days.day1, ceremony: t.programme.days.day1Ceremony, dayNum: '1' },
+    { id: '2', shortDay: t.programme.days.day2, ceremony: t.programme.days.day2Ceremony, dayNum: '2' },
+    { id: '3', shortDay: t.programme.days.day3, ceremony: t.programme.days.day3Ceremony, dayNum: '3' },
+    { id: '4', shortDay: t.programme.days.day4, ceremony: t.programme.days.day4Ceremony, dayNum: '4' },
   ];
+
+  // Merge translation event details with base icon & metadata
+  const baseEvents = weddingData.programme;
+  const translatedEvents = (t.programme.events || []).map((tEvt, idx) => {
+    const base = baseEvents[idx] || {};
+    return {
+      ...base,
+      ...tEvt,
+      id: tEvt.id || base.id,
+      day: base.day || '1',
+      isMainNikah: base.isMainNikah,
+      iconKey: base.id,
+    };
+  });
+
+  const displayedEvents = translatedEvents.length > 0 ? translatedEvents : baseEvents;
 
   const filteredEvents =
     activeDay === 'all'
-      ? weddingData.programme
-      : weddingData.programme.filter((evt) => evt.day === activeDay);
+      ? displayedEvents
+      : displayedEvents.filter((evt) => evt.day === activeDay);
 
   return (
     <section
@@ -57,17 +76,21 @@ export default function Programme({ onHoverEvent }) {
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#134E3A]/90 border border-[#C9A24B]/50 mb-3 shadow-[0_0_20px_rgba(201,162,75,0.25)]">
             <Calendar className="w-4 h-4 text-[#C9A24B]" />
-            <span className="font-cinzel text-xs font-bold text-[#F3E6C4] tracking-[0.25em] uppercase">
-              WEDDING ITINERARY
+            <span className={`text-xs font-bold text-[#F3E6C4] uppercase ${isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : 'font-cinzel tracking-[0.25em]'}`}>
+              {t.programme.badge}
             </span>
           </div>
 
-          <h2 className="font-cinzel text-2xl sm:text-3xl md:text-4xl text-gold-bright font-bold tracking-wider px-2">
-            {weddingData.programmeHeader}
+          <h2 className={`text-2xl sm:text-3xl md:text-4xl text-gold-bright font-bold tracking-wider px-2 ${
+            isUrdu ? 'font-urdu text-2xl sm:text-3xl' : isHindi ? 'font-poppins font-bold' : 'font-cinzel'
+          }`}>
+            {t.programme.header}
           </h2>
 
-          <p className="font-cormorant italic text-lg sm:text-xl text-[#F3E6C4]/90 mt-2 max-w-xl mx-auto">
-            Please grace each auspicious ceremony with your presence and heartfelt dua
+          <p className={`italic text-lg sm:text-xl text-[#F3E6C4]/90 mt-2 max-w-xl mx-auto ${
+            isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : 'font-cormorant'
+          }`}>
+            {t.programme.subtitle}
           </p>
         </div>
 
@@ -77,13 +100,15 @@ export default function Programme({ onHoverEvent }) {
           <div className="flex justify-center mb-3">
             <button
               onClick={() => setActiveDay('all')}
-              className={`w-full sm:w-auto px-7 py-2.5 rounded-full font-cinzel text-xs sm:text-sm font-bold tracking-[0.2em] uppercase transition-all duration-300 cursor-pointer border ${
+              className={`w-full sm:w-auto px-7 py-2.5 rounded-full text-xs sm:text-sm font-bold uppercase transition-all duration-300 cursor-pointer border ${
+                isUrdu ? 'font-urdu text-sm' : isHindi ? 'font-poppins' : 'font-cinzel tracking-[0.2em]'
+              } ${
                 activeDay === 'all'
                   ? 'bg-gradient-to-r from-[#F3E6C4] via-[#E5C365] to-[#C9A24B] text-[#06231A] border-[#FFFDF8] shadow-[0_4px_20px_rgba(201,162,75,0.45)] scale-102'
                   : 'bg-[#06231A]/90 text-[#F3E6C4] border-[#C9A24B]/40 hover:border-[#C9A24B] hover:bg-[#0B3D2E]'
               }`}
             >
-              ✦ View All 7 Wedding Events ✦
+              {t.programme.viewAll}
             </button>
           </div>
 
@@ -93,14 +118,18 @@ export default function Programme({ onHoverEvent }) {
               <button
                 key={day.id}
                 onClick={() => setActiveDay(day.id)}
-                className={`py-3 px-3 rounded-2xl font-cinzel text-xs transition-all duration-300 cursor-pointer flex flex-col items-center justify-center text-center border ${
+                className={`py-3 px-3 rounded-2xl text-xs transition-all duration-300 cursor-pointer flex flex-col items-center justify-center text-center border ${
                   activeDay === day.id
                     ? 'bg-gradient-to-r from-[#F3E6C4] via-[#E5C365] to-[#C9A24B] text-[#06231A] font-bold border-[#FFFDF8] shadow-[0_4px_20px_rgba(201,162,75,0.4)] scale-102'
                     : 'bg-[#0B3D2E]/90 text-[#F3E6C4] border-[#C9A24B]/40 hover:border-[#C9A24B] hover:bg-[#134E3A]'
                 }`}
               >
-                <span className="font-bold text-[11px] sm:text-xs tracking-wider">{day.shortDay}</span>
-                <span className={`text-[10px] mt-0.5 truncate max-w-full font-poppins ${activeDay === day.id ? 'text-[#06231A] font-semibold' : 'text-[#E5C365]'}`}>
+                <span className={`font-bold text-[11px] sm:text-xs tracking-wider ${isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : 'font-cinzel'}`}>
+                  {day.shortDay}
+                </span>
+                <span className={`text-[10px] mt-0.5 truncate max-w-full ${
+                  isUrdu ? 'font-urdu text-[11px]' : 'font-poppins'
+                } ${activeDay === day.id ? 'text-[#06231A] font-semibold' : 'text-[#E5C365]'}`}>
                   {day.ceremony}
                 </span>
               </button>
@@ -110,8 +139,8 @@ export default function Programme({ onHoverEvent }) {
 
         {/* Event Cards Stack — Large, Clear & Unmistakable Dates */}
         <div className="space-y-6 sm:space-y-8">
-          {filteredEvents.map((evt, idx) => {
-            const IconComponent = iconMap[evt.icon] || Sparkles;
+          {filteredEvents.map((evt) => {
+            const IconComponent = iconMap[evt.iconKey || evt.id] || Sparkles;
             const isNikah = evt.isMainNikah;
 
             return (
@@ -136,10 +165,10 @@ export default function Programme({ onHoverEvent }) {
                   <div className="flex items-center gap-2.5">
                     <Calendar className={`w-5 h-5 ${isNikah ? 'text-[#06231A]' : 'text-[#C9A24B]'}`} />
                     <div>
-                      <span className={`font-cinzel text-base sm:text-lg font-bold tracking-wider ${isNikah ? 'text-[#06231A]' : 'text-gold-bright'}`}>
+                      <span className={`text-base sm:text-lg font-bold tracking-wider ${isNikah ? 'text-[#06231A]' : 'text-gold-bright'} ${isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : 'font-cinzel'}`}>
                         {evt.date}
                       </span>
-                      <span className={`font-serif text-sm sm:text-base font-semibold ml-2 ${isNikah ? 'text-[#06231A]/90' : 'text-[#F3E6C4]'}`}>
+                      <span className={`text-sm sm:text-base font-semibold ml-2 ${isNikah ? 'text-[#06231A]/90' : 'text-[#F3E6C4]'} ${isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : 'font-serif'}`}>
                         ({evt.dayOfWeek})
                       </span>
                     </div>
@@ -148,8 +177,8 @@ export default function Programme({ onHoverEvent }) {
                   {/* Big Readable Time Badge */}
                   <div className="flex items-center gap-2">
                     {isNikah && (
-                      <span className="hidden sm:inline-block px-3 py-1 rounded-full bg-[#06231A] text-[#E5C365] font-cinzel text-[10px] font-bold tracking-widest uppercase">
-                        SACRED CEREMONY
+                      <span className={`hidden sm:inline-block px-3 py-1 rounded-full bg-[#06231A] text-[#E5C365] text-[10px] font-bold tracking-widest uppercase ${isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : 'font-cinzel'}`}>
+                        {t.programme.sacredCeremonyBadge}
                       </span>
                     )}
                     <div
@@ -160,7 +189,7 @@ export default function Programme({ onHoverEvent }) {
                       }`}
                     >
                       <Clock className={`w-4 h-4 ${isNikah ? 'text-[#E5C365]' : 'text-[#C9A24B]'}`} />
-                      <span className="font-poppins text-xs sm:text-sm font-bold tracking-wide">
+                      <span className={`text-xs sm:text-sm font-bold tracking-wide ${isUrdu ? 'font-urdu text-sm' : 'font-poppins'}`}>
                         {evt.time}
                       </span>
                     </div>
@@ -182,24 +211,24 @@ export default function Programme({ onHoverEvent }) {
 
                     <div className="flex-1">
                       <div className="flex flex-wrap items-center justify-between gap-2">
-                        <h3 className="font-serif text-2xl sm:text-3xl text-gold-bright font-bold tracking-wide">
-                          {evt.event}
+                        <h3 className={`text-2xl sm:text-3xl text-gold-bright font-bold tracking-wide ${isUrdu ? 'font-urdu text-2xl sm:text-3xl' : isHindi ? 'font-poppins font-bold' : 'font-serif'}`}>
+                          {evt.title || evt.event}
                         </h3>
                         {isNikah && (
-                          <span className="sm:hidden px-2.5 py-0.5 rounded-full text-[10px] font-cinzel font-bold bg-[#C9A24B] text-[#06231A]">
-                            MAIN NIKAH
+                          <span className={`sm:hidden px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#C9A24B] text-[#06231A] ${isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : 'font-cinzel'}`}>
+                            {t.programme.mainNikahBadge}
                           </span>
                         )}
                       </div>
 
-                      <p className="font-poppins text-sm text-[#FBF6E9]/90 leading-relaxed mt-2.5">
+                      <p className={`text-sm text-[#FBF6E9]/90 leading-relaxed mt-2.5 ${isUrdu ? 'font-urdu text-base' : 'font-poppins'}`}>
                         {evt.description}
                       </p>
 
                       {/* Single Event Calendar Button */}
                       <div className="mt-4 pt-4 border-t border-[#C9A24B]/20 flex flex-wrap items-center justify-between gap-3">
-                        <span className="font-cinzel text-xs text-[#C9A24B] tracking-wider">
-                          Day {evt.day} Ceremony • Hotel Shree Parivaar
+                        <span className={`text-xs text-[#C9A24B] tracking-wider ${isUrdu ? 'font-urdu text-sm' : isHindi ? 'font-poppins' : 'font-cinzel'}`}>
+                          Day {evt.day} • {t.programme.ceremonyAtHotel}
                         </span>
 
                         <a
@@ -209,7 +238,7 @@ export default function Programme({ onHoverEvent }) {
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#06231A] border border-[#C9A24B]/40 text-xs font-poppins text-[#F3E6C4] hover:text-[#FFFDF8] hover:border-[#C9A24B] transition-colors"
                         >
                           <Calendar className="w-3.5 h-3.5 text-[#C9A24B]" />
-                          <span>Add to Google Calendar</span>
+                          <span className={isUrdu ? 'font-urdu text-xs' : ''}>{t.programme.addToCalendar}</span>
                           <ChevronRight className="w-3.5 h-3.5 text-[#C9A24B]" />
                         </a>
                       </div>
@@ -225,10 +254,12 @@ export default function Programme({ onHoverEvent }) {
         <div className="mt-12 text-center">
           <button
             onClick={downloadAllEventsIcs}
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-cinzel text-sm font-bold tracking-widest uppercase bg-gradient-to-r from-[#F3E6C4] via-[#E5C365] to-[#C9A24B] text-[#06231A] shadow-[0_8px_25px_rgba(201,162,75,0.4)] hover:brightness-110 active:scale-95 transition-all duration-200 cursor-pointer"
+            className={`inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-sm font-bold tracking-widest uppercase bg-gradient-to-r from-[#F3E6C4] via-[#E5C365] to-[#C9A24B] text-[#06231A] shadow-[0_8px_25px_rgba(201,162,75,0.4)] hover:brightness-110 active:scale-95 transition-all duration-200 cursor-pointer ${
+              isUrdu ? 'font-urdu text-base' : isHindi ? 'font-poppins' : 'font-cinzel'
+            }`}
           >
             <Download className="w-4 h-4 text-[#06231A]" />
-            <span>Download All 7 Events to Calendar (.ics)</span>
+            <span>{t.programme.downloadAllIcs}</span>
           </button>
         </div>
       </div>

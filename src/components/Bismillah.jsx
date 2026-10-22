@@ -1,13 +1,17 @@
 import React from 'react';
 import { weddingData } from '../data/invitation';
+import { useLanguage } from '../context/LanguageContext';
 
 /**
  * SECTION 3: BISMILLAH & INVITATION MESSAGE
- * - Sacred Bismillah in Arabic & English
+ * - Sacred Bismillah in Arabic & Translated Meaning
  * - Rising Mihrab-arch frame
  * - Exact text: Mrs. & Mr. Md. Mahtab - Request the honour of your presence on the auspicious occasion of marriage ceremony of our loving Daughter
+ * - Multi-language support (English, हिन्दी, اردو)
  */
 export default function Bismillah({ guestInfo }) {
+  const { t, isUrdu, isHindi } = useLanguage();
+
   return (
     <section
       id="bismillah"
@@ -36,18 +40,20 @@ export default function Bismillah({ guestInfo }) {
             {weddingData.bismillah.arabic}
           </h2>
 
-          {/* Sacred Translation Verbatim */}
-          <p className="font-cinzel text-xs sm:text-sm text-[#F3E6C4] tracking-[0.18em] uppercase mb-10 max-w-lg mx-auto">
-            "{weddingData.bismillah.english}"
+          {/* Sacred Translation in Active Language */}
+          <p className={`text-xs sm:text-sm text-[#F3E6C4] mb-10 max-w-lg mx-auto leading-relaxed ${
+            isUrdu ? 'font-urdu text-sm sm:text-base' : isHindi ? 'font-poppins' : 'font-cinzel tracking-[0.18em] uppercase'
+          }`}>
+            "{t.bismillah.invitationOpening || weddingData.bismillah.english}"
           </p>
 
           <div className="w-24 h-[1px] bg-gradient-to-r from-transparent via-[#C9A24B] to-transparent mx-auto mb-8" />
 
           {/* Dynamic Guest Callout if personalized */}
           {guestInfo.hasCustomName && (
-            <div className="mb-6 inline-block py-1.5 px-6 rounded-full bg-[#134E3A]/80 border border-[#C9A24B]/30">
-              <span className="font-cinzel text-xs text-[#C9A24B] uppercase tracking-wider">
-                Special Invitation For:
+            <div className="mb-6 inline-block py-1.5 px-6 rounded-full bg-[#134E3A]/80 border border-[#C9A24B]/30 shadow-sm">
+              <span className={`text-xs text-[#C9A24B] tracking-wider ${isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : 'font-cinzel uppercase'}`}>
+                {t.bismillah.specialInviteFor || 'Special Invitation For:'}
               </span>{' '}
               <span className="font-serif text-base text-[#FFFDF8] font-bold">
                 {guestInfo.displayName}
@@ -55,20 +61,26 @@ export default function Bismillah({ guestInfo }) {
             </div>
           )}
 
-          {/* Hosts Opening Line Verbatim */}
-          <h3 className="font-cinzel text-lg sm:text-2xl text-gold-bright font-bold tracking-wider mb-4">
-            {weddingData.invitationText.hosts}
+          {/* Hosts Opening Line in Active Language */}
+          <h3 className={`text-lg sm:text-2xl text-gold-bright font-bold tracking-wider mb-4 ${
+            isUrdu ? 'font-urdu text-xl sm:text-2xl' : isHindi ? 'font-poppins' : 'font-cinzel'
+          }`}>
+            {t.bismillah.hosts || weddingData.invitationText.hosts}
           </h3>
 
-          {/* Invitation Text Verbatim */}
-          <p className="font-cormorant text-xl sm:text-2xl md:text-3xl text-[#FBF6E9] leading-relaxed font-normal max-w-xl mx-auto italic">
-            "{weddingData.invitationText.message}"
+          {/* Invitation Text in Active Language */}
+          <p className={`text-lg sm:text-2xl md:text-3xl text-[#FBF6E9] leading-relaxed max-w-xl mx-auto italic ${
+            isUrdu ? 'font-urdu text-xl sm:text-2xl not-italic' : isHindi ? 'font-poppins text-lg sm:text-xl not-italic' : 'font-cormorant'
+          }`}>
+            "{t.bismillah.message || weddingData.invitationText.message}"
           </p>
 
           <div className="mt-10 flex items-center justify-center gap-3">
             <div className="w-8 h-[1px] bg-[#C9A24B]/50" />
-            <span className="font-script text-2xl sm:text-3xl text-gold-bright">
-              {weddingData.meta.brideFull} &amp; {weddingData.meta.groomFull}
+            <span className={`text-2xl sm:text-3xl text-gold-bright ${
+              isUrdu ? 'font-urdu' : isHindi ? 'font-poppins font-bold' : 'font-script'
+            }`}>
+              {t.couple.brideFull} &amp; {t.couple.groomFull}
             </span>
             <div className="w-8 h-[1px] bg-[#C9A24B]/50" />
           </div>

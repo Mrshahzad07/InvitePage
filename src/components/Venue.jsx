@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { weddingData } from '../data/invitation';
 import { copyToClipboard } from '../utils/share';
+import { useLanguage } from '../context/LanguageContext';
 
 /**
  * SECTION 7: VENUE (Hotel Shree Parivaar, Barhi)
@@ -20,8 +21,10 @@ import { copyToClipboard } from '../utils/share';
  * - One-tap "Open in Google Maps"
  * - "Copy Address" with toast feedback
  * - Travel route guidance (GT Road / NH 19)
+ * - Multi-language support (English, हिन्दी, اردو)
  */
 export default function Venue() {
+  const { t, isUrdu, isHindi } = useLanguage();
   const [copied, setCopied] = useState(false);
   const [mapQrUrl, setMapQrUrl] = useState('');
 
@@ -41,7 +44,7 @@ export default function Venue() {
   }, []);
 
   const handleCopyAddress = async () => {
-    const fullAddress = `${weddingData.venue.name}, ${weddingData.venue.address}`;
+    const fullAddress = `${t.venue.hallName}, ${t.venue.address}`;
     const res = await copyToClipboard(fullAddress);
     if (res.success) {
       setCopied(true);
@@ -80,28 +83,28 @@ export default function Venue() {
           {/* Section Pill */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#134E3A]/90 border border-[#C9A24B]/40 mb-4 mt-3">
             <MapPin className="w-4 h-4 text-[#C9A24B]" />
-            <span className="font-cinzel text-xs font-bold text-[#F3E6C4] tracking-[0.2em] uppercase">
-              WEDDING VENUE & GPS NAVIGATION
+            <span className={`text-xs font-bold text-[#F3E6C4] uppercase ${isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : 'font-cinzel tracking-[0.2em]'}`}>
+              {t.venue.badge}
             </span>
           </div>
 
           {/* Venue Name Verbatim */}
-          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-gold-bright font-bold tracking-wide mb-2">
-            {weddingData.venue.name}
+          <h2 className={`text-3xl sm:text-4xl md:text-5xl text-gold-bright font-bold tracking-wide mb-2 ${isUrdu ? 'font-urdu text-3xl sm:text-4xl' : isHindi ? 'font-poppins font-bold' : 'font-serif'}`}>
+            {t.venue.hallName}
           </h2>
 
-          <p className="font-cinzel text-sm sm:text-base text-[#C9A24B] tracking-[0.2em] uppercase font-semibold mb-6">
-            {weddingData.venue.displayCity}
+          <p className={`text-sm sm:text-base text-[#C9A24B] font-semibold mb-6 ${isUrdu ? 'font-urdu text-sm' : isHindi ? 'font-poppins' : 'font-cinzel tracking-[0.2em] uppercase'}`}>
+            {t.venue.displayCity}
           </p>
 
           {/* Detailed Address Block */}
           <div className="p-5 sm:p-6 rounded-2xl bg-[#06231A]/80 border border-[#C9A24B]/30 max-w-xl mx-auto mb-8 shadow-inner">
-            <p className="font-poppins text-sm sm:text-base text-[#FBF6E9] leading-relaxed font-medium">
-              {weddingData.venue.address}
+            <p className={`text-sm sm:text-base text-[#FBF6E9] leading-relaxed font-medium ${isUrdu ? 'font-urdu text-base' : 'font-poppins'}`}>
+              {t.venue.address}
             </p>
             <div className="flex items-center justify-center gap-2 mt-3 text-xs text-[#E5C365] font-poppins">
-              <Car className="w-4 h-4 text-[#C9A24B]" />
-              <span>Prime Highway Location: Grand Trunk Road / NH 19 (near Barhi Chowk)</span>
+              <Car className="w-4 h-4 text-[#C9A24B] shrink-0" />
+              <span className={isUrdu ? 'font-urdu text-xs' : ''}>{t.venue.highwayLocation}</span>
             </div>
           </div>
 
@@ -109,13 +112,13 @@ export default function Venue() {
           <div className="my-8 p-6 sm:p-8 rounded-3xl bg-gradient-to-b from-[#06231A]/90 to-[#0B3D2E]/90 border-2 border-[#C9A24B] max-w-lg mx-auto shadow-[0_10px_30px_rgba(0,0,0,0.6)]">
             <div className="flex items-center justify-center gap-2 mb-3">
               <QrCode className="w-5 h-5 text-[#E5C365]" />
-              <span className="font-cinzel text-xs sm:text-sm font-bold text-gold-bright tracking-wider uppercase">
-                SCAN WITH PHONE FOR GOOGLE MAPS
+              <span className={`text-xs sm:text-sm font-bold text-gold-bright tracking-wider uppercase ${isUrdu ? 'font-urdu text-sm' : isHindi ? 'font-poppins' : 'font-cinzel'}`}>
+                {t.venue.scanPhoneTitle}
               </span>
             </div>
 
-            <p className="font-poppins text-xs text-[#F3E6C4]/80 mb-5 max-w-md mx-auto">
-              Scan this QR code with any smartphone camera to instantly launch turn-by-turn GPS navigation directly to Hotel Shree Parivaar:
+            <p className={`text-xs text-[#F3E6C4]/80 mb-5 max-w-md mx-auto ${isUrdu ? 'font-urdu text-sm' : 'font-poppins'}`}>
+              {t.venue.scanPhoneDesc}
             </p>
 
             {/* QR Code Container with Gold Glow */}
@@ -145,7 +148,7 @@ export default function Venue() {
                 className="inline-flex items-center gap-1.5 text-xs font-poppins text-[#C9A24B] hover:text-[#FFFDF8] transition-colors cursor-pointer"
               >
                 <Download className="w-3.5 h-3.5" />
-                <span>Save Location QR Image to Phone</span>
+                <span className={isUrdu ? 'font-urdu' : ''}>{t.venue.saveQrButton}</span>
               </button>
             </div>
           </div>
@@ -157,27 +160,31 @@ export default function Venue() {
               href={weddingData.venue.googleMapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl font-cinzel text-xs sm:text-sm font-bold tracking-wider uppercase bg-gradient-to-r from-[#F3E6C4] via-[#E5C365] to-[#C9A24B] text-[#06231A] hover:brightness-110 transition-all duration-200 shadow-[0_4px_20px_rgba(201,162,75,0.4)] cursor-pointer"
+              className={`w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl text-xs sm:text-sm font-bold tracking-wider uppercase bg-gradient-to-r from-[#F3E6C4] via-[#E5C365] to-[#C9A24B] text-[#06231A] hover:brightness-110 transition-all duration-200 shadow-[0_4px_20px_rgba(201,162,75,0.4)] cursor-pointer ${
+                isUrdu ? 'font-urdu text-sm' : isHindi ? 'font-poppins' : 'font-cinzel'
+              }`}
             >
               <Navigation className="w-4 h-4 text-[#06231A]" />
-              <span>Open in Google Maps</span>
+              <span>{t.venue.openMaps}</span>
               <ExternalLink className="w-3.5 h-3.5 text-[#06231A]" />
             </a>
 
             {/* Copy Address */}
             <button
               onClick={handleCopyAddress}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl font-cinzel text-xs sm:text-sm font-semibold tracking-wider uppercase bg-[#134E3A] text-[#F3E6C4] border border-[#C9A24B]/50 hover:border-[#C9A24B] hover:bg-[#0B3D2E] transition-all duration-200 cursor-pointer"
+              className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl text-xs sm:text-sm font-semibold tracking-wider uppercase bg-[#134E3A] text-[#F3E6C4] border border-[#C9A24B]/50 hover:border-[#C9A24B] hover:bg-[#0B3D2E] transition-all duration-200 cursor-pointer ${
+                isUrdu ? 'font-urdu text-sm' : isHindi ? 'font-poppins' : 'font-cinzel'
+              }`}
             >
               {copied ? (
                 <>
                   <Check className="w-4 h-4 text-[#10B981]" />
-                  <span className="text-[#10B981] font-bold">Address Copied!</span>
+                  <span className="text-[#10B981] font-bold">{t.venue.addressCopied}</span>
                 </>
               ) : (
                 <>
                   <Copy className="w-4 h-4 text-[#C9A24B]" />
-                  <span>Copy Address</span>
+                  <span>{t.venue.copyAddress}</span>
                 </>
               )}
             </button>

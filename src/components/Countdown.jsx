@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, Sparkles } from 'lucide-react';
 import { weddingData } from '../data/invitation';
+import { useLanguage } from '../context/LanguageContext';
 
 /**
  * SECTION 6: COUNTDOWN TO NIKAH
  * Target: 12-Dec-2026 22:00 IST (UTC+05:30)
  * 3D luxury flip digit boxes
- * On the event day: "Alhamdulillah, today is the day"
+ * Multi-language support (English, हिन्दी, اردو)
  */
 export default function Countdown() {
+  const { t, isUrdu, isHindi } = useLanguage();
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
@@ -69,10 +71,10 @@ export default function Countdown() {
   const formatDigits = (num) => String(num).padStart(2, '0');
 
   const units = [
-    { label: 'DAYS', value: formatDigits(timeLeft.days) },
-    { label: 'HOURS', value: formatDigits(timeLeft.hours) },
-    { label: 'MINUTES', value: formatDigits(timeLeft.minutes) },
-    { label: 'SECONDS', value: formatDigits(timeLeft.seconds) },
+    { label: t.countdown.days, value: formatDigits(timeLeft.days) },
+    { label: t.countdown.hours, value: formatDigits(timeLeft.hours) },
+    { label: t.countdown.minutes, value: formatDigits(timeLeft.minutes) },
+    { label: t.countdown.seconds, value: formatDigits(timeLeft.seconds) },
   ];
 
   return (
@@ -84,36 +86,40 @@ export default function Countdown() {
         {/* Section Header */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-gold-subtle border border-[#C9A24B]/30 mb-4">
           <Clock className="w-3.5 h-3.5 text-[#C9A24B]" />
-          <span className="font-cinzel text-xs text-[#F3E6C4] tracking-[0.25em] uppercase">
-            COUNTDOWN TO NIKAH
+          <span className={`text-xs text-[#F3E6C4] uppercase ${isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : 'font-cinzel tracking-[0.25em]'}`}>
+            {t.countdown.badge}
           </span>
         </div>
 
-        <h2 className="font-cinzel text-2xl sm:text-3xl md:text-4xl text-gold-bright font-bold tracking-wider mb-2">
-          12 December 2026 • 10:00 PM IST
+        <h2 className={`text-2xl sm:text-3xl md:text-4xl text-gold-bright font-bold tracking-wider mb-2 ${
+          isUrdu ? 'font-urdu text-2xl sm:text-3xl' : isHindi ? 'font-poppins font-bold' : 'font-cinzel'
+        }`}>
+          {t.countdown.title}
         </h2>
 
-        <p className="font-cormorant italic text-lg sm:text-xl text-[#F3E6C4]/80 mb-10">
-          Counting every blessed moment until the sacred vows
+        <p className={`italic text-lg sm:text-xl text-[#F3E6C4]/80 mb-10 ${
+          isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : 'font-cormorant'
+        }`}>
+          {t.countdown.subtitle}
         </p>
 
         {timeLeft.isToday ? (
           <div className="py-8 px-6 rounded-2xl glass-emerald-card border-2 border-[#C9A24B] shadow-[0_0_40px_rgba(201,162,75,0.4)] animate-pulse-glow">
             <Sparkles className="w-8 h-8 text-[#E5C365] mx-auto mb-3" />
-            <h3 className="font-serif text-3xl sm:text-4xl text-gold-bright font-bold">
-              Alhamdulillah, today is the day!
+            <h3 className={`text-3xl sm:text-4xl text-gold-bright font-bold ${isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : 'font-serif'}`}>
+              {t.countdown.ceremonyBegun}
             </h3>
             <p className="font-poppins text-sm text-[#F3E6C4] mt-2">
-              We look forward to welcoming you at Hotel Shree Parivaar, Barhi tonight.
+              {t.countdown.ceremonyBegunSub}
             </p>
           </div>
         ) : timeLeft.isPast ? (
           <div className="py-8 px-6 rounded-2xl glass-emerald-card border border-[#C9A24B]/40">
-            <h3 className="font-serif text-2xl sm:text-3xl text-gold-bright font-bold">
-              Alhamdulillah, the Nikah has been solemnised!
+            <h3 className={`text-2xl sm:text-3xl text-gold-bright font-bold ${isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : 'font-serif'}`}>
+              {t.countdown.ceremonyPast}
             </h3>
             <p className="font-poppins text-sm text-[#F3E6C4] mt-2">
-              Jazakallah Khair for your gracious presence and heartfelt prayers.
+              {t.countdown.ceremonyPastSub}
             </p>
           </div>
         ) : (
@@ -136,7 +142,9 @@ export default function Countdown() {
                 </div>
 
                 {/* Label */}
-                <div className="font-cinzel text-[10px] sm:text-xs font-semibold text-[#F3E6C4]/80 tracking-[0.25em] uppercase mt-1.5">
+                <div className={`text-[10px] sm:text-xs font-semibold text-[#F3E6C4]/80 tracking-wider uppercase mt-1.5 ${
+                  isUrdu ? 'font-urdu text-xs' : isHindi ? 'font-poppins' : 'font-cinzel'
+                }`}>
                   {unit.label}
                 </div>
               </div>
@@ -146,7 +154,7 @@ export default function Countdown() {
 
         {/* Timezone Note */}
         <p className="font-poppins text-xs text-[#C9A24B]/70 tracking-wider mt-6">
-          * Indian Standard Time (IST • UTC+05:30)
+          {t.countdown.timezoneNote}
         </p>
       </div>
     </section>

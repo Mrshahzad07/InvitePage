@@ -3,16 +3,19 @@ import { ChevronDown, Heart, Sparkles, Download } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { weddingData } from '../data/invitation';
 import { generatePersonalizedWeddingPdf } from '../utils/pdfGenerator';
+import { useLanguage } from '../context/LanguageContext';
 
 /**
  * SECTION 2: HERO WITH REAL 3D CARTOON COUPLE
  * - Prominent 3D Cartoon Groom & Bride characters (Sherwani/Topi, Emerald Lehenga/Dupatta)
- * - Rotating welcoming speech bubbles
+ * - Rotating welcoming speech bubbles in active language
  * - Interactive Mubarak & Salaam buttons
  * - Dulhan first: "Farha Praveen & Md. Firoj"
  * - Dynamic guest greeting banner & Personalized PDF download
+ * - Multi-language support (English, हिन्दी, اردو)
  */
 export default function Hero({ guestInfo, onNavigateSection }) {
+  const { t, isUrdu, isHindi, language } = useLanguage();
   const [bubbleIndex, setBubbleIndex] = useState(0);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
 
@@ -33,8 +36,8 @@ export default function Hero({ guestInfo, onNavigateSection }) {
     }
   };
 
-  // Welcoming speech bubble messages
-  const speechOptions = [
+  // Welcoming speech bubble messages from active language
+  const speechOptions = t.hero.speechBubbles || [
     'Assalamu Alaikum wa Rahmatullahi wa Barakatuh',
     'Welcome to our Wedding Celebration!',
     'Aap sabhi ko dil se dawat hai',
@@ -66,13 +69,13 @@ export default function Hero({ guestInfo, onNavigateSection }) {
       <div className="flex flex-col items-center animate-float">
         <div className="inline-flex items-center gap-2 px-5 py-1.5 rounded-full glass-gold-subtle border border-[#C9A24B]/50 mb-2 shadow-[0_0_20px_rgba(201,162,75,0.2)]">
           <span className="w-2.5 h-2.5 rounded-full bg-[#E5C365] animate-ping" />
-          <span className="font-cinzel text-xs font-bold text-[#F3E6C4] tracking-[0.25em] uppercase">
-            ROYAL NIKAH INVITATION
+          <span className={`text-xs font-bold text-[#F3E6C4] uppercase ${isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : 'font-cinzel tracking-[0.25em]'}`}>
+            {t.hero.badge}
           </span>
         </div>
 
-        <div className="font-cinzel text-xs sm:text-sm text-gold-bright tracking-[0.2em] uppercase font-semibold">
-          12.12.2026 • Saturday (10:00 PM)
+        <div className={`text-xs sm:text-sm text-gold-bright uppercase font-semibold ${isUrdu ? 'font-urdu text-sm' : isHindi ? 'font-poppins' : 'font-cinzel tracking-[0.2em]'}`}>
+          {t.hero.dateHeader}
         </div>
       </div>
 
@@ -86,36 +89,36 @@ export default function Hero({ guestInfo, onNavigateSection }) {
         </div>
 
         {/* Spiritual Invocation */}
-        <p className="font-cormorant italic text-sm sm:text-lg text-[#F3E6C4]/90 tracking-wide mt-1 mb-1">
-          Together with the blessings of Allah
+        <p className={`italic text-sm sm:text-lg text-[#F3E6C4]/90 tracking-wide mt-1 mb-1 ${isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : 'font-cormorant'}`}>
+          {t.hero.blessing}
         </p>
 
         {/* Bride & Groom Complete Full Names - Dulhan first as requested */}
-        <h1 className="font-script text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-gold-bright leading-tight filter drop-shadow-[0_4px_15px_rgba(0,0,0,0.9)] my-0.5">
-          {weddingData.meta.brideFull}
+        <h1 className={`${isUrdu ? 'font-urdu text-4xl sm:text-5xl md:text-6xl my-1' : isHindi ? 'font-poppins font-bold text-4xl sm:text-5xl md:text-6xl my-1' : 'font-script text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-8xl my-0.5'} text-gold-bright leading-tight filter drop-shadow-[0_4px_15px_rgba(0,0,0,0.9)]`}>
+          {t.couple.brideFull}
         </h1>
 
         <div className="flex items-center justify-center gap-3 sm:gap-4 my-0.5">
           <div className="h-[1.5px] w-12 sm:w-24 bg-gradient-to-r from-transparent via-[#C9A24B] to-[#C9A24B]" />
           <span className="font-cormorant italic text-xl sm:text-3xl text-[#F3E6C4] px-1 sm:px-2 tracking-wider">
-            &
+            {t.hero.connector || '&'}
           </span>
           <div className="h-[1.5px] w-12 sm:w-24 bg-gradient-to-l from-transparent via-[#C9A24B] to-[#C9A24B]" />
         </div>
 
-        <h2 className="font-script text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-gold-bright leading-tight filter drop-shadow-[0_4px_15px_rgba(0,0,0,0.9)] my-0.5">
-          {weddingData.meta.groomFull}
+        <h2 className={`${isUrdu ? 'font-urdu text-4xl sm:text-5xl md:text-6xl my-1' : isHindi ? 'font-poppins font-bold text-4xl sm:text-5xl md:text-6xl my-1' : 'font-script text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-8xl my-0.5'} text-gold-bright leading-tight filter drop-shadow-[0_4px_15px_rgba(0,0,0,0.9)]`}>
+          {t.couple.groomFull}
         </h2>
 
-        <p className="font-poppins text-xs sm:text-sm text-[#F3E6C4]/85 tracking-wider mt-1 mb-2">
-          Invite you to celebrate their wedding ceremony
+        <p className={`text-xs sm:text-sm text-[#F3E6C4]/85 tracking-wider mt-1 mb-2 ${isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : 'font-poppins'}`}>
+          {t.hero.inviteText}
         </p>
 
         {/* 3D CARTOON BRIDE & GROOM INTERACTIVE SHOWCASE */}
         <div className="relative mt-4 mb-3 flex flex-col items-center w-full max-w-md px-2">
           {/* Animated Welcoming Speech Bubble */}
           <div className="relative mb-3 px-4 sm:px-5 py-2.5 rounded-2xl glass-emerald-card border-2 border-[#C9A24B] shadow-[0_0_25px_rgba(201,162,75,0.4)] w-full max-w-sm sm:max-w-md animate-pulse-glow">
-            <p className="font-serif text-xs sm:text-base text-[#FFFDF8] font-bold tracking-wide flex items-center justify-center gap-2">
+            <p className={`text-xs sm:text-base text-[#FFFDF8] font-bold tracking-wide flex items-center justify-center gap-2 ${isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : 'font-serif'}`}>
               <Heart className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#E5C365] fill-[#E5C365] shrink-0" />
               <span>"{speechOptions[bubbleIndex]}"</span>
             </p>
@@ -133,12 +136,12 @@ export default function Hero({ guestInfo, onNavigateSection }) {
 
             {/* Bottom Character Caption matching photo positions (Groom on left, Bride on right) */}
             <div className="absolute bottom-3 left-3 right-3 py-1.5 px-3 rounded-xl bg-[#06231A]/90 backdrop-blur-md border border-[#C9A24B]/50 flex items-center justify-between">
-              <span className="font-cinzel text-[10px] sm:text-xs text-[#E5C365] font-bold tracking-wider">
-                Md. Firoj (Dulha)
+              <span className={`text-[10px] sm:text-xs text-[#E5C365] font-bold tracking-wider ${isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : 'font-cinzel'}`}>
+                {t.hero.dulhaLabel}
               </span>
               <Heart className="w-3.5 h-3.5 text-[#C9A24B] fill-[#C9A24B]" />
-              <span className="font-cinzel text-[10px] sm:text-xs text-[#E5C365] font-bold tracking-wider">
-                Farha Praveen (Dulhan)
+              <span className={`text-[10px] sm:text-xs text-[#E5C365] font-bold tracking-wider ${isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : 'font-cinzel'}`}>
+                {t.hero.dulhanLabel}
               </span>
             </div>
           </div>
@@ -147,10 +150,10 @@ export default function Hero({ guestInfo, onNavigateSection }) {
           <div className="flex items-center justify-center gap-3 mt-3">
             <button
               onClick={handleSendMubarak}
-              className="px-4 py-2 rounded-full bg-[#134E3A] border border-[#C9A24B] text-[#FFFDF8] font-cinzel text-xs font-semibold tracking-wider hover:bg-[#C9A24B] hover:text-[#06231A] transition-all flex items-center gap-1.5 shadow-md cursor-pointer active:scale-95"
+              className={`px-4 py-2 rounded-full bg-[#134E3A] border border-[#C9A24B] text-[#FFFDF8] text-xs font-semibold tracking-wider hover:bg-[#C9A24B] hover:text-[#06231A] transition-all flex items-center gap-1.5 shadow-md cursor-pointer active:scale-95 ${isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : 'font-cinzel'}`}
             >
               <Sparkles className="w-3.5 h-3.5 text-[#E5C365]" />
-              <span>Send Mubarak (Blessing)</span>
+              <span>{t.hero.sendMubarak}</span>
             </button>
           </div>
         </div>
@@ -167,11 +170,11 @@ export default function Hero({ guestInfo, onNavigateSection }) {
         <button
           onClick={handleDownloadPdf}
           disabled={isDownloadingPdf}
-          className="mt-3.5 px-6 py-2.5 rounded-full bg-gradient-to-r from-[#F3E6C4] via-[#E5C365] to-[#C9A24B] text-[#06231A] font-cinzel text-xs font-bold tracking-wider uppercase flex items-center gap-2 shadow-[0_4px_20px_rgba(201,162,75,0.4)] hover:brightness-110 active:scale-95 transition-all cursor-pointer border border-[#FFFDF8]/50"
+          className={`mt-3.5 px-6 py-2.5 rounded-full bg-gradient-to-r from-[#F3E6C4] via-[#E5C365] to-[#C9A24B] text-[#06231A] text-xs font-bold tracking-wider uppercase flex items-center gap-2 shadow-[0_4px_20px_rgba(201,162,75,0.4)] hover:brightness-110 active:scale-95 transition-all cursor-pointer border border-[#FFFDF8]/50 ${isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : 'font-cinzel'}`}
           title="Download printable wedding card in PDF format"
         >
           <Download className="w-4 h-4 text-[#06231A]" />
-          <span>{isDownloadingPdf ? 'Generating Royal PDF...' : 'Download Invitation Card (PDF)'}</span>
+          <span>{isDownloadingPdf ? t.hero.downloadingPdf : t.hero.downloadPdf}</span>
         </button>
       </div>
 
@@ -182,8 +185,8 @@ export default function Hero({ guestInfo, onNavigateSection }) {
           className="group flex flex-col items-center text-[#F3E6C4]/80 hover:text-[#C9A24B] transition-colors cursor-pointer"
           aria-label="Scroll to Invitation Message"
         >
-          <span className="font-cinzel text-[10px] tracking-[0.25em] uppercase mb-1">
-            Read Invitation Details
+          <span className={`text-[10px] uppercase mb-1 ${isUrdu ? 'font-urdu text-xs' : isHindi ? 'font-poppins' : 'font-cinzel tracking-[0.25em]'}`}>
+            {t.hero.readDetails}
           </span>
           <div className="w-8 h-8 rounded-full border border-[#C9A24B]/50 flex items-center justify-center group-hover:border-[#C9A24B] transition-colors">
             <ChevronDown className="w-4 h-4 text-[#C9A24B] animate-bounce" />

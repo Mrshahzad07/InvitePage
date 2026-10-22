@@ -1,6 +1,7 @@
 import React from 'react';
 import { Phone, MessageCircle, Heart, MapPin, Users, Sparkles, Star } from 'lucide-react';
 import { weddingData } from '../data/invitation';
+import { useLanguage } from '../context/LanguageContext';
 
 /**
  * SECTION 8: HOSTS & R.S.V.P.
@@ -10,8 +11,14 @@ import { weddingData } from '../data/invitation';
  * - Tap-to-call buttons for all 3 phone numbers
  * - WhatsApp direct chat link (wa.me)
  * - Family members list & "All Relatives & Friends"
+ * - Multi-language support (English, हिन्दी, اردو)
  */
 export default function HostsRsvp() {
+  const { t, isUrdu, isHindi } = useLanguage();
+
+  const lateEldersList = t.hostsRsvp.lateElders || weddingData.rsvp.lateElders;
+  const familyMembersList = t.hostsRsvp.familyMembers || weddingData.rsvp.familyMembers;
+
   return (
     <section
       id="rsvp"
@@ -28,26 +35,26 @@ export default function HostsRsvp() {
 
           <div className="mt-3 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#134E3A] border border-[#C9A24B]/60 mb-3 shadow-md">
             <Sparkles className="w-4 h-4 text-[#E5C365]" />
-            <span className="font-cinzel text-xs font-bold text-[#FFFDF8] tracking-[0.25em] uppercase">
-              ETERNAL BLESSINGS & SACRED MEMORY
+            <span className={`text-xs font-bold text-[#FFFDF8] uppercase ${isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : 'font-cinzel tracking-[0.25em]'}`}>
+              {t.hostsRsvp.lateEldersBadge}
             </span>
           </div>
 
-          <h3 className="font-serif text-2xl sm:text-3xl md:text-4xl text-gold-bright font-bold tracking-wide mt-1 mb-2">
-            In Revere Remembrance of Our Beloved Late Elders
+          <h3 className={`text-2xl sm:text-3xl md:text-4xl text-gold-bright font-bold tracking-wide mt-1 mb-2 ${isUrdu ? 'font-urdu text-2xl sm:text-3xl' : isHindi ? 'font-poppins font-bold' : 'font-serif'}`}>
+            {t.hostsRsvp.lateEldersHeading}
           </h3>
 
           <p className="font-arabic text-xl sm:text-2xl text-[#C9A24B] mb-6">
-            سایۂ شفقت و مغفرت کی دعا کے ساتھ
+            {t.hostsRsvp.lateEldersDua}
           </p>
 
-          <p className="font-cormorant italic text-base sm:text-lg text-[#F3E6C4]/90 max-w-xl mx-auto mb-8">
-            The foundation, guidance, and prayers of our cherished elders remain with us forever as we celebrate this sacred union.
+          <p className={`italic text-base sm:text-lg text-[#F3E6C4]/90 max-w-xl mx-auto mb-8 ${isUrdu ? 'font-urdu text-base' : isHindi ? 'font-poppins' : 'font-cormorant'}`}>
+            {t.hostsRsvp.lateEldersSub}
           </p>
 
           {/* HIGHLIGHTED LATE ELDERS DIGNIFIED SHRINE GRID */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-2xl mx-auto">
-            {weddingData.rsvp.lateElders.map((elder) => (
+            {lateEldersList.map((elder) => (
               <div
                 key={elder.name}
                 className="relative p-6 sm:p-7 rounded-2xl bg-gradient-to-br from-[#06231A] via-[#0B3D2E] to-[#134E3A] border-2 border-[#C9A24B] shadow-[0_10px_30px_rgba(0,0,0,0.7)] group hover:scale-105 transition-all duration-300"
@@ -58,16 +65,16 @@ export default function HostsRsvp() {
                 <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-[#C9A24B]" />
                 <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-[#C9A24B]" />
 
-                <span className="font-cinzel text-[10px] text-[#C9A24B] tracking-[0.2em] uppercase font-semibold block mb-2">
-                  Beloved Pillar of Family
+                <span className={`text-[10px] text-[#C9A24B] uppercase font-semibold block mb-2 ${isUrdu ? 'font-urdu text-xs' : isHindi ? 'font-poppins' : 'font-cinzel tracking-[0.2em]'}`}>
+                  {t.hostsRsvp.pillarOfFamily}
                 </span>
 
-                <h4 className="font-cinzel text-2xl sm:text-3xl text-gold-bright font-bold tracking-wider drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                <h4 className={`text-2xl sm:text-3xl text-gold-bright font-bold tracking-wider drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] ${isUrdu ? 'font-urdu text-2xl sm:text-3xl' : isHindi ? 'font-poppins font-bold' : 'font-cinzel'}`}>
                   {elder.name}
                 </h4>
 
-                <p className="font-poppins text-xs text-[#F3E6C4]/70 mt-2">
-                  (May Allah grant them the highest station in Jannat-ul-Firdaus)
+                <p className={`text-xs text-[#F3E6C4]/70 mt-2 ${isUrdu ? 'font-urdu text-sm' : 'font-poppins'}`}>
+                  {t.hostsRsvp.elderPrayer}
                 </p>
               </div>
             ))}
@@ -78,33 +85,33 @@ export default function HostsRsvp() {
         <div className="glass-emerald-card rounded-3xl p-6 sm:p-10 border-2 border-[#C9A24B]/50 shadow-[0_20px_50px_rgba(0,0,0,0.8)] text-center relative overflow-hidden">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#134E3A]/90 border border-[#C9A24B]/40 mb-3">
             <Heart className="w-3.5 h-3.5 text-[#C9A24B]" />
-            <span className="font-cinzel text-xs font-bold text-[#F3E6C4] tracking-[0.2em] uppercase">
-              WARM HOSTS
+            <span className={`text-xs font-bold text-[#F3E6C4] uppercase ${isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : 'font-cinzel tracking-[0.2em]'}`}>
+              {t.hostsRsvp.warmHosts}
             </span>
           </div>
 
-          {/* Heading Verbatim */}
-          <h2 className="font-cinzel text-base sm:text-lg text-[#F3E6C4] tracking-wider uppercase mb-1">
-            {weddingData.inviter.heading}
+          {/* Heading in Active Language */}
+          <h2 className={`text-base sm:text-lg text-[#F3E6C4] tracking-wider uppercase mb-1 ${isUrdu ? 'font-urdu' : isHindi ? 'font-poppins font-semibold' : 'font-cinzel'}`}>
+            {t.hostsRsvp.inviterHeading}
           </h2>
 
-          {/* Host Name Verbatim */}
-          <h3 className="font-serif text-3xl sm:text-4xl md:text-5xl text-gold-bright font-bold mb-4">
-            {weddingData.inviter.name}
+          {/* Host Name in Active Language */}
+          <h3 className={`text-3xl sm:text-4xl md:text-5xl text-gold-bright font-bold mb-4 ${isUrdu ? 'font-urdu text-3xl sm:text-4xl' : isHindi ? 'font-poppins font-bold' : 'font-serif'}`}>
+            {t.hostsRsvp.inviterName}
           </h3>
 
-          {/* Host Address Verbatim */}
+          {/* Host Address in Active Language */}
           <div className="flex items-start justify-center gap-2 max-w-xl mx-auto mb-8 px-2">
             <MapPin className="w-4 h-4 text-[#C9A24B] shrink-0 mt-1" />
-            <p className="font-poppins text-xs sm:text-sm text-[#FBF6E9]/90 leading-relaxed text-center">
-              {weddingData.inviter.address}
+            <p className={`text-xs sm:text-sm text-[#FBF6E9]/90 leading-relaxed text-center ${isUrdu ? 'font-urdu text-sm' : 'font-poppins'}`}>
+              {t.hostsRsvp.inviterAddress}
             </p>
           </div>
 
           {/* Tap-to-call Numbers Grid */}
           <div className="border-t border-[#C9A24B]/20 pt-6">
-            <p className="font-cinzel text-xs text-[#C9A24B] tracking-[0.2em] uppercase font-bold mb-4">
-              TAP TO CALL OR WHATSAPP
+            <p className={`text-xs text-[#C9A24B] uppercase font-bold mb-4 ${isUrdu ? 'font-urdu text-sm' : isHindi ? 'font-poppins' : 'font-cinzel tracking-[0.2em]'}`}>
+              {t.hostsRsvp.tapToCall}
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl mx-auto">
@@ -112,6 +119,7 @@ export default function HostsRsvp() {
                 <a
                   key={mobile}
                   href={`tel:${mobile}`}
+                  dir="ltr"
                   className="group flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-[#06231A] border border-[#C9A24B]/40 hover:border-[#C9A24B] hover:bg-[#134E3A] transition-all duration-200 shadow-sm"
                 >
                   <Phone className="w-4 h-4 text-[#C9A24B] group-hover:scale-110 transition-transform" />
@@ -130,10 +138,12 @@ export default function HostsRsvp() {
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 py-3 px-6 rounded-xl font-cinzel text-xs font-bold tracking-wider uppercase bg-[#134E3A] text-[#FFFDF8] border border-[#10B981]/60 hover:bg-[#10B981] hover:text-[#06231A] transition-all duration-200 shadow-lg cursor-pointer"
+                className={`inline-flex items-center gap-2 py-3 px-6 rounded-xl text-xs font-bold tracking-wider uppercase bg-[#134E3A] text-[#FFFDF8] border border-[#10B981]/60 hover:bg-[#10B981] hover:text-[#06231A] transition-all duration-200 shadow-lg cursor-pointer ${
+                  isUrdu ? 'font-urdu text-sm' : isHindi ? 'font-poppins' : 'font-cinzel'
+                }`}
               >
                 <MessageCircle className="w-4 h-4 text-[#10B981] group-hover:text-[#06231A]" />
-                <span>Message on WhatsApp ({weddingData.inviter.whatsappMobile})</span>
+                <span>{t.hostsRsvp.whatsappDirect} ({weddingData.inviter.whatsappMobile})</span>
               </a>
             </div>
           </div>
@@ -143,21 +153,23 @@ export default function HostsRsvp() {
         <div className="glass-emerald-card rounded-3xl p-6 sm:p-10 border border-[#C9A24B]/40 shadow-[0_20px_50px_rgba(0,0,0,0.8)] text-center">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#134E3A]/80 border border-[#C9A24B]/30 mb-4">
             <Users className="w-3.5 h-3.5 text-[#C9A24B]" />
-            <span className="font-cinzel text-xs text-[#F3E6C4] tracking-[0.2em] uppercase font-bold">
-              {weddingData.rsvp.heading}
+            <span className={`text-xs text-[#F3E6C4] uppercase font-bold ${isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : 'font-cinzel tracking-[0.2em]'}`}>
+              {t.hostsRsvp.rsvpBadge}
             </span>
           </div>
 
-          <h3 className="font-serif text-2xl sm:text-3xl text-gold-bright font-bold mb-6">
-            With The Warm Compliments & Respects Of Our Family
+          <h3 className={`text-2xl sm:text-3xl text-gold-bright font-bold mb-6 ${isUrdu ? 'font-urdu text-2xl sm:text-3xl' : isHindi ? 'font-poppins font-bold' : 'font-serif'}`}>
+            {t.hostsRsvp.familyCompliments}
           </h3>
 
-          {/* Respected Family Members */}
+          {/* Respected Family Members (All Preserved!) */}
           <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3.5 max-w-2xl mx-auto my-6">
-            {weddingData.rsvp.familyMembers.map((member) => (
+            {familyMembersList.map((member) => (
               <span
                 key={member}
-                className="py-2 px-4 rounded-full bg-[#0B3D2E] border border-[#C9A24B]/35 font-poppins text-xs sm:text-sm text-[#FBF6E9] shadow-sm font-medium hover:border-[#C9A24B] transition-colors"
+                className={`py-2 px-4 rounded-full bg-[#0B3D2E] border border-[#C9A24B]/35 text-xs sm:text-sm text-[#FBF6E9] shadow-sm font-medium hover:border-[#C9A24B] transition-colors ${
+                  isUrdu ? 'font-urdu text-sm' : isHindi ? 'font-poppins' : 'font-poppins'
+                }`}
               >
                 {member}
               </span>
@@ -166,8 +178,8 @@ export default function HostsRsvp() {
 
           {/* All Relatives & Friends Verbatim */}
           <div className="mt-8 pt-6 border-t border-[#C9A24B]/20">
-            <p className="font-cormorant italic text-2xl sm:text-3xl text-gold-bright font-bold">
-              {weddingData.rsvp.inclusive}
+            <p className={`text-2xl sm:text-3xl text-gold-bright font-bold ${isUrdu ? 'font-urdu text-2xl sm:text-3xl' : isHindi ? 'font-poppins font-bold text-xl sm:text-2xl' : 'font-cormorant italic'}`}>
+              {t.hostsRsvp.inclusive}
             </p>
           </div>
         </div>

@@ -21,6 +21,7 @@ import {
 } from '../utils/share';
 import { downloadAllEventsIcs, getGoogleCalendarUrl } from '../utils/calendar';
 import { generatePersonalizedWeddingPdf } from '../utils/pdfGenerator';
+import { useLanguage } from '../context/LanguageContext';
 
 /**
  * SECTION 9: SHARE & SAVE
@@ -31,8 +32,10 @@ import { generatePersonalizedWeddingPdf } from '../utils/pdfGenerator';
  * - Copy Link with Toast
  * - Interactive QR Code Modal
  * - Custom Guest Name Link Builder (for family sharing convenience!)
+ * - Multi-language support (English, हिन्दी, اردو)
  */
 export default function ShareSave({ guestInfo }) {
+  const { t, isUrdu, isHindi, language } = useLanguage();
   const [customName, setCustomName] = useState(guestInfo.displayName || '');
   const [copied, setCopied] = useState(false);
   const [qrModalOpen, setQrModalOpen] = useState(false);
@@ -95,42 +98,44 @@ export default function ShareSave({ guestInfo }) {
           {/* Header */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#134E3A]/80 border border-[#C9A24B]/30 mb-4">
             <Share2 className="w-3.5 h-3.5 text-[#C9A24B]" />
-            <span className="font-cinzel text-xs text-[#F3E6C4] tracking-[0.2em] uppercase">
-              SAVE & SHARE
+            <span className={`text-xs text-[#F3E6C4] uppercase ${isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : 'font-cinzel tracking-[0.2em]'}`}>
+              {t.share.badge}
             </span>
           </div>
 
-          <h2 className="font-serif text-3xl sm:text-4xl text-gold-bright font-bold mb-3">
-            Share The Joy
+          <h2 className={`text-3xl sm:text-4xl text-gold-bright font-bold mb-3 ${isUrdu ? 'font-urdu text-3xl sm:text-4xl' : isHindi ? 'font-poppins font-bold' : 'font-serif'}`}>
+            {t.share.title}
           </h2>
 
-          <p className="font-poppins text-xs sm:text-sm text-[#FBF6E9]/80 max-w-lg mx-auto mb-8">
-            Save this invitation to your calendar or share a personalized link with your beloved family and friends on WhatsApp.
+          <p className={`text-xs sm:text-sm text-[#FBF6E9]/80 max-w-lg mx-auto mb-8 ${isUrdu ? 'font-urdu text-sm' : 'font-poppins'}`}>
+            {t.share.subtitle}
           </p>
 
           {/* Guest Personalization Box for Easy Sharing */}
           <div className="p-4 sm:p-5 rounded-2xl bg-[#06231A]/70 border border-[#C9A24B]/30 mb-8 max-w-xl mx-auto text-left">
-            <label className="block font-cinzel text-[11px] text-[#C9A24B] uppercase tracking-wider mb-2">
-              Personalize for a relative / friend (Optional):
+            <label className={`block text-[11px] text-[#C9A24B] uppercase tracking-wider mb-2 ${isUrdu ? 'font-urdu text-xs' : isHindi ? 'font-poppins' : 'font-cinzel'}`}>
+              {t.share.personalizeLabel}
             </label>
             <div className="flex flex-col sm:flex-row gap-2">
               <input
                 type="text"
                 value={customName}
                 onChange={(e) => setCustomName(e.target.value)}
-                placeholder="e.g. Rahim Chacha, Dr. Farooq, Salma Khala"
+                placeholder={t.share.placeholder}
                 className="flex-1 px-4 py-2.5 rounded-xl bg-[#0B3D2E] border border-[#C9A24B]/40 text-[#FFFDF8] placeholder-[#F3E6C4]/40 font-poppins text-sm focus:outline-none focus:border-[#C9A24B]"
               />
               <button
                 onClick={handleCopyLink}
-                className="px-4 py-2.5 rounded-xl bg-[#134E3A] border border-[#C9A24B]/50 text-[#F3E6C4] font-cinzel text-xs font-semibold tracking-wider flex items-center justify-center gap-2 hover:bg-[#C9A24B] hover:text-[#06231A] transition-colors cursor-pointer"
+                className={`px-4 py-2.5 rounded-xl bg-[#134E3A] border border-[#C9A24B]/50 text-[#F3E6C4] text-xs font-semibold tracking-wider flex items-center justify-center gap-2 hover:bg-[#C9A24B] hover:text-[#06231A] transition-colors cursor-pointer ${
+                  isUrdu ? 'font-urdu text-sm' : isHindi ? 'font-poppins' : 'font-cinzel'
+                }`}
               >
                 {copied ? <Check className="w-4 h-4 text-[#10B981]" /> : <Copy className="w-4 h-4" />}
-                <span>{copied ? 'Copied!' : 'Copy Link'}</span>
+                <span>{copied ? t.share.copiedText : t.share.copyLinkText}</span>
               </button>
             </div>
             <p className="font-poppins text-[10px] text-[#F3E6C4]/60 mt-2">
-              Generating: {buildInviteLink(customName)}
+              {t.share.generatingLabel} {buildInviteLink(customName)}
             </p>
           </div>
 
@@ -140,46 +145,56 @@ export default function ShareSave({ guestInfo }) {
             <button
               onClick={handleDownloadPdf}
               disabled={isDownloadingPdf}
-              className="col-span-1 sm:col-span-2 py-4 px-6 rounded-2xl font-cinzel text-xs sm:text-sm font-bold tracking-wider uppercase bg-gradient-to-r from-[#F3E6C4] via-[#E5C365] to-[#C9A24B] text-[#06231A] hover:brightness-110 transition-all flex items-center justify-center gap-2.5 shadow-[0_6px_25px_rgba(201,162,75,0.45)] cursor-pointer border-2 border-[#FFFDF8]/50 active:scale-98"
+              className={`col-span-1 sm:col-span-2 py-4 px-6 rounded-2xl text-xs sm:text-sm font-bold tracking-wider uppercase bg-gradient-to-r from-[#F3E6C4] via-[#E5C365] to-[#C9A24B] text-[#06231A] hover:brightness-110 transition-all flex items-center justify-center gap-2.5 shadow-[0_6px_25px_rgba(201,162,75,0.45)] cursor-pointer border-2 border-[#FFFDF8]/50 active:scale-98 ${
+                isUrdu ? 'font-urdu text-base' : isHindi ? 'font-poppins' : 'font-cinzel'
+              }`}
             >
               <Download className="w-5 h-5 text-[#06231A]" />
-              <span>{isDownloadingPdf ? 'Generating Royal PDF Card...' : 'Download My Invitation Card (PDF)'}</span>
+              <span>{isDownloadingPdf ? t.share.downloadingPdf : t.share.downloadMyPdf}</span>
             </button>
 
             {/* WhatsApp Share Button */}
             <button
               onClick={handleWhatsAppShare}
-              className="py-3.5 px-6 rounded-xl font-cinzel text-xs sm:text-sm font-semibold tracking-wider uppercase bg-[#25D366] text-[#06231A] hover:bg-[#20ba59] transition-all flex items-center justify-center gap-2 shadow-[0_4px_15px_rgba(37,211,102,0.3)] cursor-pointer"
+              className={`py-3.5 px-6 rounded-xl text-xs sm:text-sm font-semibold tracking-wider uppercase bg-[#25D366] text-[#06231A] hover:bg-[#20ba59] transition-all flex items-center justify-center gap-2 shadow-[0_4px_15px_rgba(37,211,102,0.3)] cursor-pointer ${
+                isUrdu ? 'font-urdu text-sm' : isHindi ? 'font-poppins' : 'font-cinzel'
+              }`}
             >
               <MessageCircle className="w-4 h-4 fill-[#06231A]" />
-              <span>Share on WhatsApp</span>
+              <span>{t.share.shareWhatsAppButton}</span>
             </button>
 
             {/* Web Share / Device Share */}
             <button
               onClick={handleNativeShare}
-              className="py-3.5 px-6 rounded-xl font-cinzel text-xs sm:text-sm font-semibold tracking-wider uppercase bg-gradient-to-r from-[#F3E6C4] via-[#E5C365] to-[#C9A24B] text-[#06231A] hover:brightness-110 transition-all flex items-center justify-center gap-2 shadow-[0_4px_15px_rgba(201,162,75,0.4)] cursor-pointer"
+              className={`py-3.5 px-6 rounded-xl text-xs sm:text-sm font-semibold tracking-wider uppercase bg-gradient-to-r from-[#F3E6C4] via-[#E5C365] to-[#C9A24B] text-[#06231A] hover:brightness-110 transition-all flex items-center justify-center gap-2 shadow-[0_4px_15px_rgba(201,162,75,0.4)] cursor-pointer ${
+                isUrdu ? 'font-urdu text-sm' : isHindi ? 'font-poppins' : 'font-cinzel'
+              }`}
             >
               <Share2 className="w-4 h-4 text-[#06231A]" />
-              <span>Share with Others</span>
+              <span>{t.share.shareOthers}</span>
             </button>
 
             {/* Download Calendar .ICS */}
             <button
               onClick={downloadAllEventsIcs}
-              className="py-3.5 px-6 rounded-xl font-cinzel text-xs sm:text-sm font-semibold tracking-wider uppercase bg-[#134E3A] border border-[#C9A24B]/50 text-[#F3E6C4] hover:bg-[#0B3D2E] hover:border-[#C9A24B] transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className={`py-3.5 px-6 rounded-xl text-xs sm:text-sm font-semibold tracking-wider uppercase bg-[#134E3A] border border-[#C9A24B]/50 text-[#F3E6C4] hover:bg-[#0B3D2E] hover:border-[#C9A24B] transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                isUrdu ? 'font-urdu text-sm' : isHindi ? 'font-poppins' : 'font-cinzel'
+              }`}
             >
               <Download className="w-4 h-4 text-[#C9A24B]" />
-              <span>Download .ICS Calendar</span>
+              <span>{t.share.downloadIcs}</span>
             </button>
 
             {/* View QR Code */}
             <button
               onClick={() => setQrModalOpen(true)}
-              className="py-3.5 px-6 rounded-xl font-cinzel text-xs sm:text-sm font-semibold tracking-wider uppercase bg-[#134E3A] border border-[#C9A24B]/50 text-[#F3E6C4] hover:bg-[#0B3D2E] hover:border-[#C9A24B] transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className={`py-3.5 px-6 rounded-xl text-xs sm:text-sm font-semibold tracking-wider uppercase bg-[#134E3A] border border-[#C9A24B]/50 text-[#F3E6C4] hover:bg-[#0B3D2E] hover:border-[#C9A24B] transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                isUrdu ? 'font-urdu text-sm' : isHindi ? 'font-poppins' : 'font-cinzel'
+              }`}
             >
               <QrCode className="w-4 h-4 text-[#C9A24B]" />
-              <span>Show QR Code</span>
+              <span>{t.share.showQr}</span>
             </button>
           </div>
         </div>
@@ -197,11 +212,11 @@ export default function ShareSave({ guestInfo }) {
               <X className="w-4 h-4" />
             </button>
 
-            <span className="font-cinzel text-xs text-[#C9A24B] tracking-widest uppercase">
-              SCAN TO OPEN INVITATION
+            <span className={`text-xs text-[#C9A24B] tracking-widest uppercase ${isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : 'font-cinzel'}`}>
+              {t.share.scanToOpen}
             </span>
-            <h3 className="font-serif text-2xl text-gold-bright font-bold my-2">
-              {weddingData.meta.brideFull} &amp; {weddingData.meta.groomFull}
+            <h3 className={`text-2xl text-gold-bright font-bold my-2 ${isUrdu ? 'font-urdu' : isHindi ? 'font-poppins font-bold' : 'font-serif'}`}>
+              {t.couple.brideFull} &amp; {t.couple.groomFull}
             </h3>
 
             {/* QR Code Canvas / Image */}
@@ -220,7 +235,7 @@ export default function ShareSave({ guestInfo }) {
             </div>
 
             <p className="font-poppins text-xs text-[#F3E6C4]/80">
-              {customName ? `Tailored for: ${customName}` : 'Point phone camera to open on mobile'}
+              {customName ? `${t.share.tailoredFor} ${customName}` : t.share.pointPhone}
             </p>
           </div>
         </div>

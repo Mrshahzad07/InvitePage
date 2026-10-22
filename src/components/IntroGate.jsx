@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { Sparkles, ChevronRight, Heart, Star } from 'lucide-react';
 import { weddingData } from '../data/invitation';
+import { useLanguage } from '../context/LanguageContext';
+import LanguageSwitcher from './LanguageSwitcher';
 
 /**
  * ROYAL 3D ARCHED WEDDING GATE
@@ -9,10 +11,12 @@ import { weddingData } from '../data/invitation';
  * - Completely covers and conceals all invitation content until doors fully swing open
  * - Deep royal maroon, emerald, ivory, and antique gold aesthetic
  * - 3D cartoon bride & groom featured on the gate welcome stage
- * - Both full names: Md. Firoj & Farha Praveen prominently displayed
+ * - Both full names: Farha Praveen & Md. Firoj prominently displayed
  * - Synchronized 3D door rotation with real transition-end event (no premature reveals)
+ * - Multi-language switcher (English, हिन्दी, اردو)
  */
 export default function IntroGate({ guestInfo, onUpdateGuestName, onOpenStart, onOpenComplete, gateState = 'closed' }) {
+  const { t, isUrdu, isHindi, language } = useLanguage();
   const [internalState, setInternalState] = useState('closed'); // 'closed' | 'opening' | 'opened'
   const [enteredName, setEnteredName] = useState(
     guestInfo.hasCustomName ? guestInfo.displayName : ''
@@ -186,15 +190,18 @@ export default function IntroGate({ guestInfo, onUpdateGuestName, onOpenStart, o
         }`}
       >
         {/* Top Arch Crown & Star Finial */}
-        <div className="flex items-center justify-center gap-2 mb-2">
+        <div className="flex items-center justify-center gap-2 mb-1">
           <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-[#C9A24B]" />
           <Star className="w-4 h-4 text-[#E5C365] fill-[#E5C365]" />
           <span className="font-cinzel text-[10px] sm:text-xs text-[#E5C365] font-bold tracking-[0.25em] uppercase">
-            ROYAL WEDDING INVITATION
+            {t.introGate.badge}
           </span>
           <Star className="w-4 h-4 text-[#E5C365] fill-[#E5C365]" />
           <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-[#C9A24B]" />
         </div>
+
+        {/* Multi-Language Selection Pill (English • हिन्दी • اردو) */}
+        <LanguageSwitcher variant="gate" />
 
         {/* Sacred Bismillah */}
         <p className="font-arabic text-xl sm:text-2xl text-[#C9A24B] tracking-wide mb-1">
@@ -202,8 +209,8 @@ export default function IntroGate({ guestInfo, onUpdateGuestName, onOpenStart, o
         </p>
 
         {/* Spiritual Welcome Header */}
-        <p className="font-cormorant italic text-sm sm:text-base text-[#F3E6C4]/90 mb-3">
-          Together with the blessings of Allah
+        <p className={`italic text-sm sm:text-base text-[#F3E6C4]/90 mb-2 ${isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : 'font-cormorant'}`}>
+          {t.introGate.subBadge}
         </p>
 
         {/* 3D CARTOON BRIDE & GROOM WELCOME PREVIEW */}
@@ -229,17 +236,17 @@ export default function IntroGate({ guestInfo, onUpdateGuestName, onOpenStart, o
 
         {/* BOTH COMPLETE FULL NAMES - DULHAN (Farha Praveen) FIRST, THEN DULHA (Md. Firoj) */}
         <div className="mt-4 mb-2">
-          <h2 className="font-script text-3xl sm:text-4xl md:text-5xl text-gold-bright leading-tight filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]">
-            {weddingData.meta.brideFull}
+          <h2 className={`${isUrdu ? 'font-urdu text-2xl sm:text-3xl' : isHindi ? 'font-poppins font-bold text-2xl sm:text-3xl' : 'font-script text-3xl sm:text-4xl md:text-5xl'} text-gold-bright leading-tight filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]`}>
+            {t.couple.brideFull}
           </h2>
           <span className="font-cormorant italic text-lg sm:text-xl text-[#F3E6C4] px-2">
-            &
+            {t.hero.connector || '&'}
           </span>
-          <h2 className="font-script text-3xl sm:text-4xl md:text-5xl text-gold-bright leading-tight filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]">
-            {weddingData.meta.groomFull}
+          <h2 className={`${isUrdu ? 'font-urdu text-2xl sm:text-3xl' : isHindi ? 'font-poppins font-bold text-2xl sm:text-3xl' : 'font-script text-3xl sm:text-4xl md:text-5xl'} text-gold-bright leading-tight filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]`}>
+            {t.couple.groomFull}
           </h2>
-          <p className="font-poppins text-xs text-[#F3E6C4]/80 mt-0.5">
-            Invite you to celebrate their wedding
+          <p className="font-poppins text-xs text-[#F3E6C4]/80 mt-1">
+            {t.introGate.inviteLine}
           </p>
         </div>
 
@@ -250,7 +257,7 @@ export default function IntroGate({ guestInfo, onUpdateGuestName, onOpenStart, o
             : 'border-[#E5C365]/70 focus-within:border-[#E5C365]'
         }`}>
           <label htmlFor="gate-visitor-name" className="block font-cinzel text-[11px] text-[#E5C365] font-bold tracking-wider uppercase mb-1">
-            ✦ Please Enter Your Name to Open Invitation <span className="text-amber-400">*</span>
+            {t.introGate.nameLabel} <span className="text-amber-400">*</span>
           </label>
           <input
             id="gate-visitor-name"
@@ -261,41 +268,41 @@ export default function IntroGate({ guestInfo, onUpdateGuestName, onOpenStart, o
             onKeyDown={(e) => {
               if (e.key === 'Enter') handleOpenGate();
             }}
-            placeholder="e.g. Salma Khala, Dr. Rashid, Farooq Bhai"
+            placeholder={t.introGate.namePlaceholder}
             className="w-full px-3.5 py-2 rounded-xl bg-[#0B3D2E] border border-[#C9A24B]/50 text-[#FFFDF8] placeholder-[#F3E6C4]/40 font-poppins text-xs sm:text-sm focus:outline-none focus:border-[#E5C365] shadow-inner"
           />
 
           {nameError ? (
             <p className="font-poppins text-[11px] text-amber-300 font-semibold mt-1.5 flex items-center gap-1.5">
-              <span>⚠️</span> Please enter your name above to unlock your invitation
+              {t.introGate.nameError}
             </p>
           ) : (
             <p className="font-poppins text-[10px] text-[#F3E6C4]/80 mt-1">
               {enteredName.trim()
-                ? `Greeting: ${guestInfo.salutation} ${enteredName.trim()}`
-                : 'Name required for your personalized wedding card'}
+                ? `${t.introGate.greetingPrefix} ${guestInfo.salutation} ${enteredName.trim()}`
+                : t.introGate.nameRequiredHint}
             </p>
           )}
         </div>
 
         {/* Date & Venue Tag */}
         <p className="font-cinzel text-xs text-[#E5C365] tracking-[0.18em] uppercase font-semibold mb-4">
-          {weddingData.meta.dateShort} ({weddingData.meta.dayShort}) • {weddingData.venue.name}
+          12.12.2026 • {t.venue.hallName}
         </p>
 
         {/* "Open Wedding Invitation" 3D Glowing Button */}
         <button
           onClick={handleOpenGate}
           disabled={isOpening}
-          className="group relative w-full py-4 px-6 rounded-2xl font-cinzel font-bold text-sm sm:text-base tracking-[0.2em] uppercase text-[#06231A] bg-gradient-to-r from-[#F3E6C4] via-[#E5C365] to-[#C9A24B] hover:brightness-110 shadow-[0_8px_30px_rgba(201,162,75,0.5)] active:scale-95 transition-all duration-200 flex items-center justify-center gap-2.5 cursor-pointer border-2 border-[#FFFDF8]/40"
+          className="group relative w-full py-4 px-6 rounded-2xl font-cinzel font-bold text-sm sm:text-base tracking-[0.15em] uppercase text-[#06231A] bg-gradient-to-r from-[#F3E6C4] via-[#E5C365] to-[#C9A24B] hover:brightness-110 shadow-[0_8px_30px_rgba(201,162,75,0.5)] active:scale-95 transition-all duration-200 flex items-center justify-center gap-2.5 cursor-pointer border-2 border-[#FFFDF8]/40"
         >
           <Sparkles className="w-5 h-5 text-[#06231A] animate-spin" />
-          <span>
+          <span className={isUrdu ? 'font-urdu' : isHindi ? 'font-poppins' : ''}>
             {isOpening
-              ? 'Opening Royal Gate...'
+              ? t.introGate.openingButton
               : enteredName.trim()
-              ? `Open Invitation for ${enteredName.trim()}`
-              : 'Enter Name to Open Invitation'}
+              ? `${t.introGate.openButton} ${enteredName.trim()}`
+              : t.introGate.openDefaultButton}
           </span>
           <ChevronRight className="w-5 h-5 text-[#06231A] group-hover:translate-x-1 transition-transform" />
         </button>

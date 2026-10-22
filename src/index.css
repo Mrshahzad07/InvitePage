@@ -17,6 +17,8 @@
     --font-cinzel: 'Cinzel', serif;
     --font-cormorant: 'Cormorant Garamond', Georgia, serif;
     --font-arabic: 'Amiri', serif;
+    --font-urdu: 'Noto Nastaliq Urdu', 'Amiri', serif;
+    --font-hindi: 'Tiro Devanagari Hindi', 'Poppins', sans-serif;
     --font-body: 'Poppins', system-ui, sans-serif;
   }
 
@@ -69,6 +71,15 @@
 
 .font-poppins {
   font-family: var(--font-body);
+}
+
+.font-urdu {
+  font-family: var(--font-urdu);
+  line-height: 1.8;
+}
+
+.font-hindi {
+  font-family: var(--font-hindi);
 }
 
 /* Luxury Gold & Metallic Text Gradients */

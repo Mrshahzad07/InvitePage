@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Music, Play, Pause } from 'lucide-react';
 import { weddingMusic } from '../utils/sound';
+import { useLanguage } from '../context/LanguageContext';
 
 /**
  * RESPONSIVE WEDDING MUSIC CONTROLLER
@@ -8,8 +9,10 @@ import { weddingMusic } from '../utils/sound';
  * - Fixed safely in the bottom-right corner with full safe-area inset support
  * - Mobile-first compact pill that never covers card text or bottom navigation
  * - Desktop expands with clear label and animated equalizer waves
+ * - Full multilingual support (English, Hindi, Urdu)
  */
 export default function AudioToggle() {
+  const { t } = useLanguage();
   const [isPlaying, setIsPlaying] = useState(() => weddingMusic.getIsPlaying());
 
   useEffect(() => {
@@ -38,8 +41,8 @@ export default function AudioToggle() {
             ? 'bg-[#134E3A] border-[#E5C365] text-[#FFFDF8] shadow-[0_0_25px_rgba(201,162,75,0.5)]'
             : 'bg-[#06231A]/95 border-[#C9A24B]/70 text-[#F3E6C4] hover:border-[#E5C365]'
         }`}
-        aria-label={isPlaying ? 'Pause Sab Tera wedding music' : 'Play Sab Tera wedding music'}
-        title={isPlaying ? 'Pause Sab Tera' : 'Play Sab Tera (Wedding Song)'}
+        aria-label={isPlaying ? t.audio.playing : t.audio.play}
+        title={isPlaying ? t.audio.playing : t.audio.play}
       >
         {/* Play / Pause Toggle Medallion: Instantly switches between Play and Pause */}
         <div className={`w-8 h-8 rounded-full border flex items-center justify-center shrink-0 shadow-inner transition-colors duration-200 ${
@@ -58,10 +61,10 @@ export default function AudioToggle() {
         <div className="hidden sm:block text-left pr-1">
           <p className="font-cinzel text-[11px] font-bold text-gold-bright tracking-wider uppercase leading-none flex items-center gap-1.5">
             {isPlaying && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />}
-            <span>{isPlaying ? 'Sab Tera Playing' : 'Play Sab Tera'}</span>
+            <span>{isPlaying ? t.audio.playing : t.audio.play}</span>
           </p>
           <p className="font-poppins text-[9px] text-[#F3E6C4]/80 mt-0.5">
-            {isPlaying ? 'Pause Music' : 'Romantic Wedding Song'}
+            {t.audio.subtitle}
           </p>
         </div>
 
